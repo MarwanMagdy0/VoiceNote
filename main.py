@@ -10,7 +10,7 @@ class UI(QMainWindow):
         self.scrollArea.widget().setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         group = Group(self)
         layout.addWidget(group)
-        group.box_vlayout.addWidget(VoiceNote(self, "output.wav"))        
+        group.box_vlayout.addWidget(VoiceNote(self, "kaf.mp3"))
 
         group.box_vlayout.addWidget(VoiceNote(self, "kaf.mp3"))        
         group.box_vlayout.addWidget(ImageWidget(self, "img.png"))

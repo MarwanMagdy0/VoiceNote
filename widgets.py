@@ -1,10 +1,13 @@
-from PyQt5.QtWidgets import QWidget, QLineEdit, QVBoxLayout, QLabel
+from PyQt5.QtWidgets import QWidget, QLineEdit, QVBoxLayout, QLabel, QDialog
 from PyQt5.QtGui import QPixmap, QImage, QIcon
 from PyQt5.QtCore import Qt, QTimer, QUrl
+from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PIL import Image
 from PyQt5 import uic
-
+import pyaudio
+import wave
+import time
 class VoiceNote(QWidget):
     def __init__(self, parent, path = None):
         super().__init__(parent)
@@ -90,6 +93,12 @@ class Group(QWidget):
         uic.loadUi("group.ui",self)
         self.path = path
         self.title_label = EditableLabel(self.title_label)
+        self.add_button.clicked.connect(self.add_button_method)
+
+    def add_button_method(self):
+        add_items_window = AddDialoge(self)
+        add_items_window.show()
+
 
 class ImageWidget(QWidget):
     def __init__(self, parent, path = None):
@@ -101,3 +110,87 @@ class ImageWidget(QWidget):
     def set_img(self, path):
         pixmap = QPixmap(path)
         self.image.setPixmap(pixmap)
+
+
+class AddDialoge(QDialog):
+    def __init__(self, parent):
+        super().__init__(parent)
+        uic.loadUi("add_items_to_group.ui",self)
+        self.record_audio_button.clicked.connect(self.record_audio_method)
+
+    def record_audio_method(self):
+        audio_recorder = RecordAudio(self, "output.wav")
+        audio_recorder.show()
+        self.close()
+
+
+
+class AudioRecorderThread(QThread):
+    audio_finished = pyqtSignal()
+
+    def __init__(self, fname):
+        super().__init__()
+        self.audio = pyaudio.PyAudio()
+        self.stream = None
+        self.frames = []
+        self.fname = fname
+        FORMAT = pyaudio.paInt16
+        CHANNELS = 1
+        RATE = 44100
+        self.CHUNK = 1024
+        self.stream = self.audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=self.CHUNK)
+
+    def run(self):
+        while not self.isInterruptionRequested():
+            data = self.stream.read(self.CHUNK)
+            self.frames.append(data)
+            
+    def save(self):
+        self.stream.stop_stream()
+        self.stream.close()
+        self.audio.terminate()
+        wave_file = wave.open(f"{self.fname}", 'wb')
+        wave_file.setnchannels(1)
+        wave_file.setsampwidth(self.audio.get_sample_size(pyaudio.paInt16))
+        wave_file.setframerate(44100)
+        wave_file.writeframes(b''.join(self.frames))
+        wave_file.close()
+
+
+class RecordAudio(QDialog):
+    def __init__(self, parent, fname):
+        super().__init__(parent)
+        uic.loadUi("record_audio.ui",self)
+        self.recorder = AudioRecorderThread(fname)
+        self.record_button.clicked.connect(self.toggle_record_state)
+        self.save_button.clicked.connect(self.save_audio)
+        self.delete_button.clicked.connect(self.delete_method)
+        self.recording = False
+    
+    def toggle_record_state(self):
+        if not self.recording:
+            self.recording = True
+            self.record_button.setIcon(QIcon("data/red_mic.png"))
+            self.save_button.setEnabled(False)
+            self.delete_button.setEnabled(False)
+            self.recorder.start()
+        else:
+            self.recording = False
+            self.recorder.requestInterruption()
+            self.record_button.setIcon(QIcon("data/mic.png"))
+            self.save_button.setEnabled(True)
+            self.delete_button.setEnabled(True)
+
+    def save_audio(self):
+        self.recorder.requestInterruption()
+        self.recorder.save()
+        self.close()
+    
+    def delete_method(self):
+        self.recorder.requestInterruption()
+        self.recorder.frames.clear()
+        self.delete_button.setEnabled(False)
+        self.save_button.setEnabled(False)
+
+
+    

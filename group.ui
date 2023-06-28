@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>840</width>
-    <height>640</height>
+    <width>284</width>
+    <height>609</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -136,7 +136,7 @@ QPushButton:pressed {
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_8">
+           <widget class="QPushButton" name="add_button">
             <property name="minimumSize">
              <size>
               <width>40</width>
