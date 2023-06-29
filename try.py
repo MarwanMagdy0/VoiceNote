@@ -1,33 +1,34 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QFontDialog
-from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTreeWidget, QTreeWidgetItem
+import sys
 
-class MainWindow(QMainWindow):
+class TreeWidgetExample(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.initUI()
 
-    def initUI(self):
-        self.setWindowTitle("Choose Font Example")
-        self.setGeometry(100, 100, 300, 200)
+        # Create the QTreeWidget
+        self.tree_widget = QTreeWidget(self)
+        self.setCentralWidget(self.tree_widget)
 
-        button = QPushButton("Choose Font", self)
-        button.move(100, 80)
-        button.clicked.connect(self.openFontDialog)
+        # Add columns to the QTreeWidget
+        self.tree_widget.setColumnCount(2)
+        self.tree_widget.setHeaderLabels(['Column 1', 'Column 2'])
 
-    def openFontDialog(self):
-        # Create a default font with Monospace and 16 pixels
-        default_font = QFont("Monospace", 20)
+        # Add items to the QTreeWidget
+        root_item = QTreeWidgetItem(self.tree_widget, ['Root Item', 'Data 1'])
+        child_item = QTreeWidgetItem(root_item, ['Child Item', 'Data 2'])
 
-        # Open the "Choose Font" dialog with the default font as the initial selection
-        font, ok = QFontDialog.getFont(default_font)
+        # Connect the itemClicked signal to a custom slot
+        self.tree_widget.itemClicked.connect(self.handle_item_clicked)
 
-        if ok:
-            # Set the chosen font as the new default font
-            QApplication.setFont(font)
-            print("Selected Font:", font.toString())
+    def handle_item_clicked(self, item, column):
+        top_index = self.tree_widget.indexOfTopLevelItem(item)
+        child_index = item.parent().indexOfChild(item)
 
-if __name__ == '__main__':
-    app = QApplication([])
-    window = MainWindow()
+        print(f"Top-Level Index: {top_index}")
+        print(f"Child Index: {child_index}")
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = TreeWidgetExample()
     window.show()
-    app.exec_()
+    sys.exit(app.exec_())

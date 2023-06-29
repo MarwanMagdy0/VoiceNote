@@ -15,14 +15,14 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QPushButton" name="image_from_clib">
+    <widget class="QPushButton" name="img_from_clib">
      <property name="text">
       <string>add image from cliboard</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="pushButton_4">
+    <widget class="QPushButton" name="img_from_camera">
      <property name="text">
       <string>add image from camera</string>
      </property>
@@ -36,7 +36,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="pushButton_3">
+    <widget class="QPushButton" name="add_text_button">
      <property name="text">
       <string>add text</string>
      </property>

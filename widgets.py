@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QLineEdit, QVBoxLayout, QLabel, QDialog, QApplication
+from PyQt5.QtWidgets import QWidget, QLineEdit, QVBoxLayout, QLabel, QDialog, QApplication, QTreeWidgetItem
 from PyQt5.QtGui import QPixmap, QImage, QIcon
 from PyQt5.QtCore import Qt, QTimer, QUrl
 from PyQt5.QtCore import QThread, pyqtSignal
@@ -58,8 +58,8 @@ class VoiceNote(QWidget):
 
 class EditableLabel(QLabel):
 	finished = pyqtSignal(str)
-	def __init__(self, existing_label):
-		super().__init__("Title")
+	def __init__(self, existing_label, text):
+		super().__init__(text)
 		self.setGeometry(existing_label.geometry())
 		layout = existing_label.parentWidget().layout()
 		layout.replaceWidget(existing_label, self)
@@ -108,19 +108,21 @@ class ImageWidget(QWidget):
 
 class Group(QWidget):
 	on_group_change = pyqtSignal(str, str, str, str)
-	def __init__(self, main_window, main_directory : str, group_fname : str, group_data):
+	def __init__(self, main_window, main_directory : str, group_fname : str, group_data, root, parent_tree):
+		self.parent_tree =parent_tree
+		self.root = root
 		self.main_window = main_window
 		super().__init__(main_window)
+		self.group_name = group_data["group-name"]
 		self.init_ui()
 		self.items = 0
 		self.group_fname = group_fname
 		self.group_directory = main_directory+ "//" + group_fname
 		self.group_data = group_data
-		self.group_name = group_data["group-name"]
 
 	def init_ui(self):
 		uic.loadUi("ui/group.ui",self)
-		self.title_label = EditableLabel(self.title_label)
+		self.title_label = EditableLabel(self.title_label, self.group_name)
 		self.title_label.finished.connect(self.editing_text_finished)
 		self.add_button.clicked.connect(self.add_button_method)
 
@@ -132,10 +134,13 @@ class Group(QWidget):
 		add_items_window.show()
 
 	def update_audio(self):
+		QTreeWidgetItem(self.parent_tree, [str(self.items) + ".wav"])
 		self.on_group_change.emit(self.group_fname, self.group_name, str(self.items), ".wav")
-		self.add_widget(VoiceNote(self,self.group_directory+ "//" + str(self.items) + ".wav"))
+		voice_object = VoiceNote(self,self.group_directory+ "//" + str(self.items) + ".wav")
+		self.add_widget(voice_object)
 	
 	def update_image(self):
+		QTreeWidgetItem(self.parent_tree, [str(self.items) + ".png"])
 		clipboard = QApplication.clipboard()
 		mime_data = clipboard.mimeData()
 		if mime_data.hasImage():
@@ -152,10 +157,12 @@ class Group(QWidget):
 			# TODO check if it is str as text will have diffrent fonts and diffrent sizes {"text":{"font-size":5, "data":"helloo", "font-type":"italic", "color":"#000000", "background-color":#ffffff}}
 			if type(item) == dict:
 				# TODO insert a text
-				pass
+				continue
 			
-			elif (item.endswith(".wav") or item.endswith(".mp3")):
-				self.add_widget(VoiceNote(self, self.group_directory  + "//" +item))
+			QTreeWidgetItem(self.parent_tree, [item])
+			if (item.endswith(".wav") or item.endswith(".mp3")):
+				voice_object = VoiceNote(self, self.group_directory  + "//" +item)
+				self.add_widget(voice_object)
 
 			elif (item.endswith(".png") or item.endswith(".jpg")):
 				img_widget = ImageWidget(self)
@@ -167,9 +174,9 @@ class Group(QWidget):
 		self.items += 1
 
 	def editing_text_finished(self, new_group_name):
+		self.root.setText(0, new_group_name)
 		self.group_name = new_group_name
 		self.on_group_change.emit(self.group_fname, self.group_name, str(self.items), "")
-
 
 
 class AddDialoge(QDialog):
@@ -180,8 +187,10 @@ class AddDialoge(QDialog):
 		self.group_directory = group_directory
 		self.item_index = item_index
 		uic.loadUi("ui/add_items_to_group.ui",self)
+		self.img_from_clib.clicked.connect(self.add_clipboard_image)
+		self.img_from_camera.clicked.connect(self.add_camera_img_method)
 		self.record_audio_button.clicked.connect(self.record_audio_method)
-		self.image_from_clib.clicked.connect(self.add_clipboard_image)
+		self.add_text_button.clicked.connect(self.add_text_method)
 
 	def record_audio_method(self):
 		audio_recorder = RecordAudio(self, self.group_directory, self.item_index)
@@ -193,6 +202,12 @@ class AddDialoge(QDialog):
 	def add_clipboard_image(self):
 		self.img_from_clib_added.emit()
 		self.close()
+	
+	def add_text_method(self):
+		pass
+
+	def add_camera_img_method(self):
+		pass
 
 
 class AudioRecorderThread(QThread):

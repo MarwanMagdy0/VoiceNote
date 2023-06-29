@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>736</width>
-    <height>596</height>
+    <width>881</width>
+    <height>633</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,6 +16,31 @@
   <property name="styleSheet">
    <string notr="true">* {
 	font: 63 16pt &quot;JetBrains Mono NL SemiBold&quot;;
+}
+
+QPushButton {
+	font: 63 20pt &quot;JetBrains Mono NL SemiBold&quot;;
+background-color: #03DAC6;
+border: 1px solid #03DAC6;
+border-radius: 20px;
+color: #FFFFFF;
+}
+QPushButton:hover {
+    border-radius:20px;
+	
+	background-color: rgb(28, 77, 255);
+    color: white;
+}
+
+QPushButton:disabled {
+    background-color: gray;
+    color: white;
+}
+
+QPushButton:pressed {
+    
+	background-color: rgb(85, 0, 255);
+    color: white;
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -32,62 +57,28 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>150</width>
+          <width>200</width>
           <height>16777215</height>
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">font: 63 10pt &quot;JetBrains Mono SemiBold&quot;;</string>
+         <string notr="true">font: 63 12pt &quot;JetBrains Mono SemiBold&quot;;</string>
         </property>
         <column>
          <property name="text">
-          <string notr="true">1</string>
+          <string>ID</string>
          </property>
         </column>
-        <item>
-         <property name="text">
-          <string>New Item</string>
-         </property>
-         <item>
-          <property name="text">
-           <string>New Subitem</string>
-          </property>
-          <item>
-           <property name="text">
-            <string>New Subitem</string>
-           </property>
-           <item>
-            <property name="text">
-             <string>New Subitem</string>
-            </property>
-            <item>
-             <property name="text">
-              <string>New Subitem</string>
-             </property>
-             <item>
-              <property name="text">
-               <string>New Subitem</string>
-              </property>
-              <item>
-               <property name="text">
-                <string>New Subitem</string>
-               </property>
-               <item>
-                <property name="text">
-                 <string>New Subitem</string>
-                </property>
-               </item>
-              </item>
-             </item>
-            </item>
-           </item>
-          </item>
-         </item>
-        </item>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="add_new_group_button">
+        <property name="styleSheet">
+         <string notr="true">font: 63 12pt &quot;JetBrains Mono NL SemiBold&quot;;
+border: 1px solid #03DAC6;
+border-radius: 10px;
+</string>
+        </property>
         <property name="text">
          <string>new group</string>
         </property>
@@ -103,6 +94,9 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
       <property name="widgetResizable">
        <bool>true</bool>
       </property>
@@ -114,8 +108,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>558</width>
-         <height>576</height>
+         <width>653</width>
+         <height>613</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout"/>
