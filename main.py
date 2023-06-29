@@ -4,7 +4,7 @@ from widgets import *
 import sys
 from utiles import *
 folder_name = "test_folder"
-initial_structure = {"0":{"group-name":"Title"}}
+initial_structure = {"0":{"group-name":"Title", "items":[]}}
 if len(sys.argv)==2:
     folder_name = sys.argv[1]
 
@@ -33,15 +33,13 @@ class UI(QMainWindow):
             self.groups.append(group)
             self.layout.addWidget(group)
             group.load_data()
-            # group.group_name_changed.connect(self.group_name_changed_method)
-            # group.new_widget_added.connect(self.adding_new_widget_to_structure)            
             group.on_group_change.connect(self.update_group)
 
     def update_group(self, group_object_and_file_type):
         group_object, file_type = group_object_and_file_type
         self.file_structure[group_object.group_fname]["group-name"] = group_object.group_name
         if file_type != "":
-            self.file_structure[group_object.group_fname][str(group_object.items-1)] = str(group_object.items-1) + file_type
+            self.file_structure[group_object.group_fname]["items"].append(str(group_object.items-1) + file_type)
         
         self.json_file.save_data(self.file_structure)
 

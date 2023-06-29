@@ -125,13 +125,17 @@ class Group(QWidget):
 
 	def load_data(self):
 		self.title_label.setText(self.group_name)
-		for key, values in self.group_data.items():
+		for item in self.group_data["items"]:
 			# TODO check if it is str as text will have diffrent fonts and diffrent sizes {"text":{"font-size":5, "data":"helloo", "font-type":"italic", "color":"#000000", "background-color":#ffffff}}
-			if (values.endswith(".wav") or values.endswith(".mp3")) and not key == "group-name":
-				self.add_widget(VoiceNote(self, self.group_directory  + "//" +values))
+			if type(item) == dict:
+				# TODO insert a text
+				pass
+			
+			elif (item.endswith(".wav") or item.endswith(".mp3")):
+				self.add_widget(VoiceNote(self, self.group_directory  + "//" +item))
 
-			if (values.endswith(".png") or values.endswith(".jpg")) and not key == "group-name":
-				self.add_widget(ImageWidget(self, self.group_directory  + "//" +values))
+			elif (item.endswith(".png") or item.endswith(".jpg")):
+				self.add_widget(ImageWidget(self, self.group_directory  + "//" +item))
 	
 	def add_widget(self, widget):
 		self.box_vlayout.addWidget(widget)
