@@ -92,11 +92,22 @@ class EditableLabel(QLabel):
 		self.setText(new_text)
 		self.show()
 		self.finished.emit(new_text)
-		print("loss focus")
 
+class ImageWidget(QWidget):
+	def __init__(self, parent_group):
+		super().__init__(parent_group)
+		uic.loadUi("ui/image.ui",self)
+	
+	def set_img(self, image_from_object):
+		pixmap = QPixmap.fromImage(image_from_object)
+		self.image.setPixmap(pixmap)
+	
+	def load_img(self, path):
+		pixmap = QPixmap(path)
+		self.image.setPixmap(pixmap)
 
 class Group(QWidget):
-	on_group_change = pyqtSignal(list)
+	on_group_change = pyqtSignal(str, str, str, str)
 	def __init__(self, main_window, main_directory : str, group_fname : str, group_data):
 		self.main_window = main_window
 		super().__init__(main_window)
@@ -116,12 +127,24 @@ class Group(QWidget):
 	def add_button_method(self):
 		add_items_window = AddDialoge(self, self.group_directory, str(self.items))
 		add_items_window.voice_record_added.connect(self.update_audio)
+		add_items_window.img_from_clib_added.connect(self.update_image)
 		add_items_window.setWindowModality(Qt.ApplicationModal)
 		add_items_window.show()
 
-	def update_audio(self, fname):
-		self.add_widget(VoiceNote(self, fname))
-		self.on_group_change.emit([self, ".wav"])	
+	def update_audio(self):
+		self.on_group_change.emit(self.group_fname, self.group_name, str(self.items), ".wav")
+		self.add_widget(VoiceNote(self,self.group_directory+ "//" + str(self.items) + ".wav"))
+	
+	def update_image(self):
+		clipboard = QApplication.clipboard()
+		mime_data = clipboard.mimeData()
+		if mime_data.hasImage():
+			image = mime_data.imageData()
+			img_widget = ImageWidget(self)
+			img_widget.set_img(image)
+			image.save(self.group_directory+ "//" + str(self.items) + ".png", "PNG")
+			self.on_group_change.emit(self.group_fname, self.group_name, str(self.items), ".png")
+			self.add_widget(img_widget)
 
 	def load_data(self):
 		self.title_label.setText(self.group_name)
@@ -135,7 +158,9 @@ class Group(QWidget):
 				self.add_widget(VoiceNote(self, self.group_directory  + "//" +item))
 
 			elif (item.endswith(".png") or item.endswith(".jpg")):
-				self.add_widget(ImageWidget(self, self.group_directory  + "//" +item))
+				img_widget = ImageWidget(self)
+				img_widget.load_img(self.group_directory  + "//" +item)
+				self.add_widget(img_widget)
 	
 	def add_widget(self, widget):
 		self.box_vlayout.addWidget(widget)
@@ -143,48 +168,31 @@ class Group(QWidget):
 
 	def editing_text_finished(self, new_group_name):
 		self.group_name = new_group_name
-		self.on_group_change.emit([self, ""])	
+		self.on_group_change.emit(self.group_fname, self.group_name, str(self.items), "")
 
-	
-
-
-class ImageWidget(QWidget):
-	def __init__(self, parent_group, file):
-		super().__init__(parent_group)
-		uic.loadUi("ui/image.ui",self)
-		self.set_img(file)
-	
-	def set_img(self, path):
-		pixmap = QPixmap(path)
-		self.image.setPixmap(pixmap)
 
 
 class AddDialoge(QDialog):
-	voice_record_added = pyqtSignal(str)
+	voice_record_added  = pyqtSignal()
+	img_from_clib_added = pyqtSignal()
 	def __init__(self, parent_group, group_directory, item_index):
 		super().__init__(parent_group)
 		self.group_directory = group_directory
 		self.item_index = item_index
 		uic.loadUi("ui/add_items_to_group.ui",self)
 		self.record_audio_button.clicked.connect(self.record_audio_method)
+		self.image_from_clib.clicked.connect(self.add_clipboard_image)
 
 	def record_audio_method(self):
 		audio_recorder = RecordAudio(self, self.group_directory, self.item_index)
-		audio_recorder.audio_added.connect(self.audio_added)
+		audio_recorder.audio_added.connect(lambda: self.voice_record_added.emit())
 		audio_recorder.setWindowModality(Qt.ApplicationModal)
 		audio_recorder.show()
 		self.close()
 	
-	def audio_added(self, fname):
-		self.voice_record_added.emit(fname)
 	def add_clipboard_image(self):
-		clipboard = QApplication.clipboard()
-		mime_data = clipboard.mimeData()
-
-		if mime_data.hasImage():
-			image = mime_data.imageData()
-			pixmap = QPixmap.fromImage(image)
-			self.label.setPixmap(pixmap)
+		self.img_from_clib_added.emit()
+		self.close()
 
 
 class AudioRecorderThread(QThread):
@@ -219,7 +227,7 @@ class AudioRecorderThread(QThread):
 		wave_file.close()
 
 class RecordAudio(QDialog):
-	audio_added = pyqtSignal(str)
+	audio_added = pyqtSignal()
 	def __init__(self, parent_dialoge, group_directory, item_index):
 		super().__init__(parent_dialoge)
 		uic.loadUi("ui/record_audio.ui",self)
@@ -248,7 +256,7 @@ class RecordAudio(QDialog):
 		self.recorder.requestInterruption()
 		self.recorder.save()
 		self.close()
-		self.audio_added.emit(self.audio_path)
+		self.audio_added.emit()
 	
 	def delete_method(self):
 		self.recorder.requestInterruption()

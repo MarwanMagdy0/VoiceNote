@@ -1,6 +1,5 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QFontDialog
+from PyQt5.QtGui import QFont
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -8,31 +7,27 @@ class MainWindow(QMainWindow):
         self.initUI()
 
     def initUI(self):
-        self.label = QLabel(self)
-        self.setCentralWidget(self.label)
-        self.setWindowTitle('Clipboard Image Example')
-        self.show()
+        self.setWindowTitle("Choose Font Example")
+        self.setGeometry(100, 100, 300, 200)
 
-        clipboard = QApplication.clipboard()
-        clipboard.dataChanged.connect(self.updateImageFromClipboard)
+        button = QPushButton("Choose Font", self)
+        button.move(100, 80)
+        button.clicked.connect(self.openFontDialog)
 
-    def updateImageFromClipboard(self):
-        clipboard = QApplication.clipboard()
-        mime_data = clipboard.mimeData()
+    def openFontDialog(self):
+        # Create a default font with Monospace and 16 pixels
+        default_font = QFont("Monospace", 20)
 
-        if mime_data.hasImage():
-            image = mime_data.imageData()
-            pixmap = QPixmap.fromImage(image)
-            self.label.setPixmap(pixmap)
-    
-    def saveAsPng(self):
-        pixmap = self.label.pixmap()
-        if pixmap is not None:
-            save_path = "path.png"
-            if save_path:
-                pixmap.save(save_path, "PNG")
+        # Open the "Choose Font" dialog with the default font as the initial selection
+        font, ok = QFontDialog.getFont(default_font)
+
+        if ok:
+            # Set the chosen font as the new default font
+            QApplication.setFont(font)
+            print("Selected Font:", font.toString())
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
+    app = QApplication([])
     window = MainWindow()
-    sys.exit(app.exec_())
+    window.show()
+    app.exec_()
