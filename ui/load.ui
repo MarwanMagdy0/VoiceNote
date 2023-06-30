@@ -14,10 +14,7 @@
    <string>MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">* {
-	font: 63 16pt &quot;JetBrains Mono NL SemiBold&quot;;
-}
-
+   <string notr="true">
 QPushButton {
 	font: 63 20pt &quot;JetBrains Mono NL SemiBold&quot;;
 background-color: #03DAC6;
