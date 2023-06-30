@@ -44,9 +44,15 @@ class UI(QMainWindow):
 
 
     def update_group(self, group_fname, group_name, items, file_type):
+        print("request update")
         self.activateWindow()
-        self.file_structure[group_fname]["group-name"] = group_name
-        if file_type != "":
+        if file_type == "name-changed":
+            self.file_structure[group_fname]["group-name"] = group_name
+        
+        elif file_type == "text-added":
+            self.file_structure[group_fname]["items"].append({"text":items, "font":group_name})
+            print("file saved")
+        elif file_type == ".wav" or file_type == ".png":
             self.file_structure[group_fname]["items"].append(items + file_type)
         
         self.json_file.save_data(self.file_structure)

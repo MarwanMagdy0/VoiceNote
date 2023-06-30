@@ -164,23 +164,28 @@ class Group(QWidget):
         label = QLabel(self, text=text)
         label.setFont(text_font)
         label.setAlignment(Qt.AlignLeft)
+        self.on_group_change.emit(self.group_fname, font, text, "text-added")
         self.add_widget(label)
-
 
     def load_data(self):
         self.title_label.setText(self.group_name)
         for item in self.group_data["items"]:
-            # TODO check if it is str as text will have diffrent fonts and diffrent sizes {"text":{"font-size":5, "data":"helloo", "font-type":"italic", "color":"#000000", "background-color":#ffffff}}
             if type(item) == dict:
-                # TODO insert a text
-                continue
+                QTreeWidgetItem(self.parent_tree, [item["text"]])
+                text_font = QFont()
+                text_font.fromString(item["font"])
+                label = QLabel(self, text=item["text"])
+                label.setFont(text_font)
+                label.setAlignment(Qt.AlignLeft)
+                self.add_widget(label)
             
-            QTreeWidgetItem(self.parent_tree, [item])
-            if (item.endswith(".wav") or item.endswith(".mp3")):
+            elif (item.endswith(".wav") or item.endswith(".mp3")):
+                QTreeWidgetItem(self.parent_tree, [item])
                 voice_object = VoiceNote(self, self.group_directory  + "//" +item)
                 self.add_widget(voice_object)
 
             elif (item.endswith(".png") or item.endswith(".jpg")):
+                QTreeWidgetItem(self.parent_tree, [item])
                 img_widget = ImageWidget(self)
                 img_widget.load_img(self.group_directory  + "//" +item)
                 self.add_widget(img_widget)
@@ -194,7 +199,7 @@ class Group(QWidget):
     def editing_text_finished(self, new_group_name):
         self.root.setText(0, new_group_name)
         self.group_name = new_group_name
-        self.on_group_change.emit(self.group_fname, self.group_name, str(self.items), "")
+        self.on_group_change.emit(self.group_fname, self.group_name, str(self.items), "name-changed")
 
 
 class AddDialoge(QDialog):
