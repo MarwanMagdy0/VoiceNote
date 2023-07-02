@@ -8,12 +8,14 @@ from PIL import Image
 from PyQt5 import uic
 import pyaudio
 import wave
-import time
-Moha = (-235, 83, 616)
+from utiles import *
+
+
+
 class VoiceNote(QWidget):
     def __init__(self, parent_group, path):
         super().__init__(parent_group)
-        uic.loadUi("ui/voice_note.ui",self)
+        uic.loadUi(SCRIPT_DIRECTORY + "ui//voice_note.ui",self)
         self.path = path
         self.init_audio()
         self.pushButton.clicked.connect(self.toggle_playback)
@@ -96,7 +98,7 @@ class EditableLabel(QLabel):
 class ImageWidget(QWidget):
     def __init__(self, parent_group):
         super().__init__(parent_group)
-        uic.loadUi("ui/image.ui",self)
+        uic.loadUi(SCRIPT_DIRECTORY + "ui/image.ui",self)
     
     def set_img(self, image_from_object):
         pixmap = QPixmap.fromImage(image_from_object)
@@ -122,7 +124,7 @@ class Group(QWidget):
 
 
     def init_ui(self):
-        uic.loadUi("ui/group.ui",self)
+        uic.loadUi(SCRIPT_DIRECTORY + "ui/group.ui",self)
         self.title_label = EditableLabel(self.title_label, self.group_name)
         self.title_label.finished.connect(self.editing_text_finished)
         self.add_button.clicked.connect(self.add_button_method)
@@ -210,7 +212,7 @@ class AddDialoge(QDialog):
         super().__init__(parent_group)
         self.group_directory = group_directory
         self.item_index = item_index
-        uic.loadUi("ui/add_items_to_group.ui",self)
+        uic.loadUi(SCRIPT_DIRECTORY + "ui/add_items_to_group.ui",self)
         self.img_from_clib.clicked.connect(self.add_clipboard_image)
         self.img_from_camera.clicked.connect(self.add_camera_img_method)
         self.record_audio_button.clicked.connect(self.record_audio_method)
@@ -245,7 +247,7 @@ class AddText(QDialog):
     font_changed = pyqtSignal(str, str)
     def __init__(self, parent):
         super().__init__(parent)
-        uic.loadUi("ui/add_text.ui", self)
+        uic.loadUi(SCRIPT_DIRECTORY + "ui/add_text.ui", self)
         self.font_button.clicked.connect(self.choose_font)
         self.save_button.clicked.connect(self.save_text)
         self.text_editor.setFont(initial_font)
@@ -298,8 +300,8 @@ class RecordAudio(QDialog):
     audio_added = pyqtSignal()
     def __init__(self, parent_dialoge, group_directory, item_index):
         super().__init__(parent_dialoge)
-        uic.loadUi("ui/record_audio.ui",self)
-        self.audio_path = group_directory+ "//"+item_index + ".wav"
+        uic.loadUi(SCRIPT_DIRECTORY + "ui/record_audio.ui",self)
+        self.audio_path = group_directory+ "//"+ get_time() + ".wav"
         self.recorder = AudioRecorderThread(self.audio_path)
         self.record_button.clicked.connect(self.toggle_record_state)
         self.save_button.clicked.connect(self.save_audio)

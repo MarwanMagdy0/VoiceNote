@@ -1,16 +1,16 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication ,QLabel ,QPushButton, QSizePolicy, QTreeWidgetItem, QScrollBar
 from PyQt5 import uic
 from widgets import *
-import sys
-from utiles import *
+
 main_directory = "test_folder"
-initial_structure = {"0":{"group-name":"Title", "items":[]}}
+initial_structure = {"0":{"group-name":"Title_0", "items":[]}}
+
 if len(sys.argv)==2:
     main_directory = sys.argv[1]
 
 if not os.path.isdir(main_directory):
     os.mkdir(main_directory)
-    os.mkdir(main_directory + "//" + "0")
+    os.mkdir(main_directory + "//" + get_time())
 
 class UI(QMainWindow):
     def __init__(self):
@@ -22,7 +22,7 @@ class UI(QMainWindow):
             self.file_structure = initial_structure
             self.json_file.save_data(initial_structure)
 
-        uic.loadUi("ui/load.ui",self)
+        uic.loadUi(SCRIPT_DIRECTORY + "ui/load.ui",self)
         self.layout = self.scrollArea.widget().layout()
         self.scrollArea.widget().setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.scroll_area_bar = self.scrollArea.verticalScrollBar()
@@ -44,14 +44,13 @@ class UI(QMainWindow):
 
 
     def update_group(self, group_fname, group_name, items, file_type):
-        print("request update")
         self.activateWindow()
         if file_type == "name-changed":
             self.file_structure[group_fname]["group-name"] = group_name
         
         elif file_type == "text-added":
             self.file_structure[group_fname]["items"].append({"text":items, "font":group_name})
-            print("file saved")
+            
         elif file_type == ".wav" or file_type == ".png":
             self.file_structure[group_fname]["items"].append(items + file_type)
         
@@ -72,12 +71,16 @@ class UI(QMainWindow):
         self.scroll_area_bar.setMaximum(self.scroll_area_bar.maximum()+200)
         self.scroll_area_bar.setValue(self.scroll_area_bar.maximum())
     
+    def resizeEvent(self, event):
+        # TODO try to resize images when ever this happens
+        pass
 
     def handle_item_clicked(self, item, column):
         find_widget = [None, item.text(column)]
         parent_text = item.text(column)
         if item.parent():
             parent_text = item.parent().text(0)
+
         for i in range(self.treeWidget.topLevelItemCount()):
             top_level_item = self.treeWidget.topLevelItem(i)
             if top_level_item.text(0) == parent_text:
