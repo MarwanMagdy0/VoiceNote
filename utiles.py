@@ -3,11 +3,11 @@ import os, sys
 import time
 from typing import Any
 
-# if len(sys.argv)==1:
-#     sys.argv.append(r"C:\Users\hp\Desktop\new.vnote")
+if len(sys.argv)==1:
+    sys.argv.append(r"C:\Users\hp\Desktop\new.vnote")
 
 SCRIPT_DIRECTORY    = os.path.dirname(os.path.realpath(__file__)) + "\\"
-# USER_FILE_DIRECTORY = sys.argv[1][:-6] # C:\Users\hp\Desktop\new
+USER_FILE_DIRECTORY = sys.argv[1][:-6] # C:\Users\hp\Desktop\new
 
 class JsonIt:
     def __init__(self,file_directory):
@@ -53,16 +53,16 @@ class JsonIt:
 def get_time():
     return str(int(time.time()))
 
+init_group = {"group-name":"Title_0", "items":[]}
+
+# Checking if the .vnote file is not empty and if it was , dump the initial directory data to it
+with open(sys.argv[1], "r") as f:
+    if f.read() == "":
+        group_fname = get_time()
+        if not os.path.isdir(USER_FILE_DIRECTORY):
+            os.mkdir(USER_FILE_DIRECTORY)
 
 
+json_file = JsonIt(sys.argv[1])
 if __name__ == "__main__":
-    json_file = JsonIt(sys.argv[1])
-    init_group = {"group-name":"Title_0", "items":[]}
-
-    # Checking if the .vnote file is not empty and if it was , dump the initial directory data to it
-    with open(sys.argv[1], "r") as f:
-        if f.read() == "":
-            group_fname = get_time()
-            if not os.path.isdir(USER_FILE_DIRECTORY):
-                os.mkdir(USER_FILE_DIRECTORY)
     print(USER_FILE_DIRECTORY)
