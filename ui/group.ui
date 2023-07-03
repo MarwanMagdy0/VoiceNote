@@ -78,7 +78,7 @@ QPushButton:pressed {
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_5">
          <item>
-          <widget class="QFrame" name="frame_3">
+          <widget class="QFrame" name="frame3">
            <property name="styleSheet">
             <string notr="true">font: 63 16pt &quot;JetBrains Mono NL SemiBold&quot;;
 </string>
@@ -91,20 +91,7 @@ QPushButton:pressed {
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_3">
             <item>
-             <widget class="QLabel" name="title_label">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="styleSheet">
-               <string notr="true"/>
-              </property>
-              <property name="text">
-               <string>Title</string>
-              </property>
-             </widget>
+             <layout class="QVBoxLayout" name="label_layout"/>
             </item>
            </layout>
           </widget>

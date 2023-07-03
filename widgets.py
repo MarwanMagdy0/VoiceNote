@@ -11,11 +11,10 @@ import wave
 from utiles import *
 
 
-
 class VoiceNote(QWidget):
     def __init__(self, parent_group, path):
         super().__init__(parent_group)
-        uic.loadUi(SCRIPT_DIRECTORY + "ui//voice_note.ui",self)
+        uic.loadUi(SCRIPT_DIRECTORY + "//" + "ui//voice_note.ui",self)
         self.path = path
         self.init_audio()
         self.pushButton.clicked.connect(self.toggle_playback)
@@ -58,47 +57,36 @@ class VoiceNote(QWidget):
             self.duration_label.setText(f"{remaining_minutes}:{remaining_seconds:02}")
 
 
-class EditableLabel(QLabel):
-    finished = pyqtSignal(str)
-    def __init__(self, existing_label, text):
-        super().__init__(text)
-        self.setGeometry(existing_label.geometry())
-        layout = existing_label.parentWidget().layout()
-        layout.replaceWidget(existing_label, self)
-
-        existing_label.deleteLater()
-        self.line_edit = QLineEdit("")
-        self.line_edit.hide()
+class EditableLabel(QWidget):
+    title_updated = pyqtSignal(str)
+    def __init__(self, group_object, title):
+        super().__init__(group_object)
+        uic.loadUi(SCRIPT_DIRECTORY + "//" + "ui/label_edit.ui",self)
         self.line_edit.editingFinished.connect(self.finish_editing)
-
+        self.line_edit.hide()
     def mouseDoubleClickEvent(self, event):
         if self.line_edit.isHidden():
-            self.line_edit.setText(self.text())
-            self.line_edit.setParent(self.parentWidget())
-            self.line_edit.setGeometry(self.geometry())
+            self.title_label.hide()
+            self.line_edit.setText(self.title_label.text())
             self.line_edit.show()
             self.line_edit.setFocus()
-            self.hide()
         else:
-            self.setText(self.line_edit.text())
+            self.title_label.setText(self.line_edit.text())
+            self.title_label.show()
             self.line_edit.hide()
-            self.show()
     
     def finish_editing(self):
-        """
-        TODO
-        dont forget to check if the temp folder is exist and if not create it and update the ui with the new temp group
-        """
         new_text = self.line_edit.text()
         self.line_edit.hide()
-        self.setText(new_text)
-        self.show()
-        self.finished.emit(new_text)
+        self.title_label.setText(new_text)
+        self.title_label.show()
+        self.title_updated.emit(new_text)
+
 
 class ImageWidget(QWidget):
     def __init__(self, parent_group):
         super().__init__(parent_group)
-        uic.loadUi(SCRIPT_DIRECTORY + "ui/image.ui",self)
+        uic.loadUi(SCRIPT_DIRECTORY + "//" + "ui/image.ui",self)
     
     def set_img(self, image_from_object):
         pixmap = QPixmap.fromImage(image_from_object)
@@ -108,41 +96,39 @@ class ImageWidget(QWidget):
         pixmap = QPixmap(path)
         self.image.setPixmap(pixmap)
 
+
 class Group(QWidget):
     on_group_change = pyqtSignal(str, str, str, str)
-    def __init__(self, main_window, main_directory : str, group_fname : str, group_data, root, parent_tree):
+    def __init__(self, main_window, group_directory, root, parent_tree):
+        super().__init__(main_window)
         self.parent_tree =parent_tree
         self.root = root
         self.main_window = main_window
-        super().__init__(main_window)
-        self.group_name = group_data["group-name"]
+        self.group_directory = group_directory
+        self.group_title = json_file[self.group_directory]["group-title"]
         self.init_ui()
-        self.items = 0
-        self.group_fname = group_fname
-        self.group_directory = main_directory+ "//" + group_fname
-        self.group_data = group_data
 
 
     def init_ui(self):
-        uic.loadUi(SCRIPT_DIRECTORY + "ui/group.ui",self)
-        self.title_label = EditableLabel(self.title_label, self.group_name)
-        self.title_label.finished.connect(self.editing_text_finished)
+        uic.loadUi(SCRIPT_DIRECTORY + "//" + "ui/group.ui",self)
+        self.title_label = EditableLabel(self, self.group_title)
+        self.label_layout.addWidget(self.title_label)
+        self.title_label.title_updated.connect(self.editing_title_finished)
         self.add_button.clicked.connect(self.add_button_method)
 
 
     def add_button_method(self):
-        add_items_window = AddDialoge(self, self.group_directory, str(self.items))
-        add_items_window.voice_record_added.connect(self.update_audio)
+        add_items_window = AddDialoge(self, self.group_directory)
+        add_items_window.voice_record_added.connect(self.add_record)
         add_items_window.img_from_clib_added.connect(self.update_image)
         add_items_window.font_changed.connect(self.add_text)
         add_items_window.setWindowModality(Qt.ApplicationModal)
         add_items_window.show()
 
 
-    def update_audio(self):
-        QTreeWidgetItem(self.parent_tree, [str(self.items) + ".wav"])
-        self.on_group_change.emit(self.group_fname, self.group_name, str(self.items), ".wav")
-        voice_object = VoiceNote(self,self.group_directory+ "//" + str(self.items) + ".wav")
+    def add_record(self, audio_name):
+        QTreeWidgetItem(self.parent_tree, [audio_name])
+        voice_object = VoiceNote(self,self.group_directory+ "//" + audio_name)
         self.add_widget(voice_object)
 
 
@@ -155,7 +141,7 @@ class Group(QWidget):
             img_widget = ImageWidget(self)
             img_widget.set_img(image)
             image.save(self.group_directory+ "//" + str(self.items) + ".png", "PNG")
-            self.on_group_change.emit(self.group_fname, self.group_name, str(self.items), ".png")
+            self.on_group_change.emit(self.group_fname, self.group_title, str(self.items), ".png")
             self.add_widget(img_widget)
 
 
@@ -169,9 +155,10 @@ class Group(QWidget):
         self.on_group_change.emit(self.group_fname, font, text, "text-added")
         self.add_widget(label)
 
+
     def load_data(self):
-        self.title_label.setText(self.group_name)
-        for item in self.group_data["items"]:
+        self.title_label.title_label.setText(self.group_title)
+        for item in json_file[self.group_directory]["items"]:
             if type(item) == dict:
                 QTreeWidgetItem(self.parent_tree, [item["text"]])
                 text_font = QFont()
@@ -183,7 +170,7 @@ class Group(QWidget):
             
             elif (item.endswith(".wav") or item.endswith(".mp3")):
                 QTreeWidgetItem(self.parent_tree, [item])
-                voice_object = VoiceNote(self, self.group_directory  + "//" +item)
+                voice_object = VoiceNote(self, self.group_directory + "//" + item)
                 self.add_widget(voice_object)
 
             elif (item.endswith(".png") or item.endswith(".jpg")):
@@ -195,32 +182,33 @@ class Group(QWidget):
 
     def add_widget(self, widget):
         self.box_vlayout.addWidget(widget)
-        self.items += 1
 
 
-    def editing_text_finished(self, new_group_name):
-        self.root.setText(0, new_group_name)
-        self.group_name = new_group_name
-        self.on_group_change.emit(self.group_fname, self.group_name, str(self.items), "name-changed")
+    def editing_title_finished(self, new_group_title):
+        self.root.setText(0, new_group_title)
+        self.group_title = new_group_title
+        data = json_file.read_data()
+        data[self.group_directory]["group-title"] = new_group_title
+        json_file.save_data(data)
+        self.title_label.title_label.setText(new_group_title)
 
 
 class AddDialoge(QDialog):
-    voice_record_added  = pyqtSignal()
+    voice_record_added  = pyqtSignal(str)
     img_from_clib_added = pyqtSignal()
     font_changed = pyqtSignal(str, str)
-    def __init__(self, parent_group, group_directory, item_index):
+    def __init__(self, parent_group, group_file_name):
         super().__init__(parent_group)
-        self.group_directory = group_directory
-        self.item_index = item_index
-        uic.loadUi(SCRIPT_DIRECTORY + "ui/add_items_to_group.ui",self)
+        self.group_file_name = group_file_name
+        uic.loadUi(SCRIPT_DIRECTORY + "//" + "ui/add_items_to_group.ui",self)
         self.img_from_clib.clicked.connect(self.add_clipboard_image)
         self.img_from_camera.clicked.connect(self.add_camera_img_method)
         self.record_audio_button.clicked.connect(self.record_audio_method)
         self.add_text_button.clicked.connect(self.add_text_method)
 
     def record_audio_method(self):
-        audio_recorder = RecordAudio(self, self.group_directory, self.item_index)
-        audio_recorder.audio_added.connect(lambda: self.voice_record_added.emit())
+        audio_recorder = RecordAudio(self, self.group_file_name)
+        audio_recorder.audio_added.connect(lambda audio_name: self.voice_record_added.emit(audio_name))
         audio_recorder.setWindowModality(Qt.ApplicationModal)
         audio_recorder.show()
         self.close()
@@ -247,7 +235,7 @@ class AddText(QDialog):
     font_changed = pyqtSignal(str, str)
     def __init__(self, parent):
         super().__init__(parent)
-        uic.loadUi(SCRIPT_DIRECTORY + "ui/add_text.ui", self)
+        uic.loadUi(SCRIPT_DIRECTORY + "//" + "ui/add_text.ui", self)
         self.font_button.clicked.connect(self.choose_font)
         self.save_button.clicked.connect(self.save_text)
         self.text_editor.setFont(initial_font)
@@ -257,12 +245,9 @@ class AddText(QDialog):
         self.text_font, ok = QFontDialog.getFont(initial_font)
         if ok:
             self.text_editor.setFont(self.text_font)
-            print(self.text_editor.font().toString())
     
     def save_text(self):
-        print(self.text_font.toString(), self.text_editor.toPlainText())
         self.font_changed.emit(self.text_font.toString(), self.text_editor.toPlainText())
-
 
 
 class AudioRecorderThread(QThread):
@@ -296,13 +281,15 @@ class AudioRecorderThread(QThread):
         wave_file.writeframes(b''.join(self.frames))
         wave_file.close()
 
+
 class RecordAudio(QDialog):
-    audio_added = pyqtSignal()
-    def __init__(self, parent_dialoge, group_directory, item_index):
+    audio_added = pyqtSignal(str)
+    def __init__(self, parent_dialoge, group_directory):
         super().__init__(parent_dialoge)
-        uic.loadUi(SCRIPT_DIRECTORY + "ui/record_audio.ui",self)
-        self.audio_path = group_directory+ "//"+ get_time() + ".wav"
-        self.recorder = AudioRecorderThread(self.audio_path)
+        self.group_directory = group_directory
+        uic.loadUi(SCRIPT_DIRECTORY + "//" + "ui/record_audio.ui",self)
+        self.audio_file_name = get_time() + ".wav"
+        self.recorder = AudioRecorderThread(group_directory+ "//"+ self.audio_file_name)
         self.record_button.clicked.connect(self.toggle_record_state)
         self.save_button.clicked.connect(self.save_audio)
         self.delete_button.clicked.connect(self.delete_method)
@@ -326,7 +313,10 @@ class RecordAudio(QDialog):
         self.recorder.requestInterruption()
         self.recorder.save()
         self.close()
-        self.audio_added.emit()
+        self.audio_added.emit(self.audio_file_name)
+        data = json_file.read_data()
+        data[self.group_directory]["items"].append(self.audio_file_name)
+        json_file.save_data(data)
     
     def delete_method(self):
         self.recorder.requestInterruption()
@@ -334,5 +324,3 @@ class RecordAudio(QDialog):
         self.delete_button.setEnabled(False)
         self.save_button.setEnabled(False)
 
-
-    

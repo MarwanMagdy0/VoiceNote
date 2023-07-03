@@ -1,12 +1,12 @@
 import json
 import os, sys
 import time
-from typing import Any
+import random
 
 if len(sys.argv)==1:
-    sys.argv.append(r"C:\Users\hp\Desktop\new.vnote")
+    sys.argv.append("C://Users//hp//Desktop//new.vnote")
 
-SCRIPT_DIRECTORY    = os.path.dirname(os.path.realpath(__file__)) + "\\"
+SCRIPT_DIRECTORY    = os.path.dirname(os.path.realpath(__file__))
 USER_FILE_DIRECTORY = sys.argv[1][:-6] # C:\Users\hp\Desktop\new
 
 class JsonIt:
@@ -40,20 +40,24 @@ class JsonIt:
         f.close()
         return data.get(key)
     
-    def __setitem__(self, key: str, value: Any) -> None:
+    def __setitem__(self, key: str, value) -> None:
         with open(self.file_directory, "r") as f:
             data = json.load(f)
-        if key not in data.keys():
-            os.mkdir(USER_FILE_DIRECTORY + "//" + key)
+    
         with open(self.file_directory, "w") as f:
             data[key] = value
             f.write(json.dumps(data))
+        
+    def keys(self):
+        with open(self.file_directory, "r") as f:
+            data = json.load(f)
+            return data.keys()
 
 
 def get_time():
-    return str(int(time.time()))
+    return str(int(time.time() + 0.5 )) 
 
-init_group = {"group-name":"Title_0", "items":[]}
+init_group = {"group-title":"Title", "items":[]}
 
 # Checking if the .vnote file is not empty and if it was , dump the initial directory data to it
 with open(sys.argv[1], "r") as f:
