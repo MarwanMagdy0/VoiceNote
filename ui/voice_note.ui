@@ -21,7 +21,7 @@
     <number>1</number>
    </property>
    <item>
-    <widget class="QPushButton" name="pushButton_2">
+    <widget class="QPushButton" name="delete_button">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -48,7 +48,7 @@
      </property>
      <property name="icon">
       <iconset>
-       <normaloff>data/settings.png</normaloff>data/settings.png</iconset>
+       <normaloff>data/bin.png</normaloff>data/bin.png</iconset>
      </property>
      <property name="iconSize">
       <size>

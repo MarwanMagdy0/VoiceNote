@@ -22,6 +22,7 @@ class UI(QMainWindow):
             group = Group(self, group_fname, root, self.treeWidget.topLevelItem(len(self.groups)))
             self.layout.addWidget(group)
             group.load_data()
+            group.activate_mainwindow.connect(self.activateWindow)
             self.scroll_area_bar.setMaximum(2147483647)
             self.scroll_area_bar.setValue(self.scroll_area_bar.maximum())
             self.groups.append(group)
@@ -38,6 +39,7 @@ class UI(QMainWindow):
         self.scroll_area_bar.setValue(self.scroll_area_bar.maximum())
         self.groups.append(group)
     
+
     def resizeEvent(self, event):
         # TODO try to resize images when ever this happens
         pass

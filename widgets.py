@@ -28,7 +28,10 @@ class VoiceNote(QWidget):
         self.timer.setInterval(100)
         self.timer.timeout.connect(self.update_slider)
         self.media_player.durationChanged.connect(self.update_duration_label)
+        self.horizontalSlider.wheelEvent = self.ignore_wheel
 
+    def ignore_wheel(self, event):
+        event.ignore()
     def set_position(self, position):
         self.media_player.setPosition(position)
 
@@ -98,7 +101,7 @@ class ImageWidget(QWidget):
 
 
 class Group(QWidget):
-    on_group_change = pyqtSignal(str, str, str, str)
+    activate_mainwindow = pyqtSignal()
     def __init__(self, main_window, group_directory, root, parent_tree):
         super().__init__(main_window)
         self.parent_tree =parent_tree
@@ -120,7 +123,7 @@ class Group(QWidget):
     def add_button_method(self):
         add_items_window = AddDialoge(self, self.group_directory)
         add_items_window.voice_record_added.connect(self.add_record)
-        add_items_window.img_from_clib_added.connect(self.update_image)
+        add_items_window.img_from_clib_added.connect(self.add_image)
         add_items_window.font_changed.connect(self.add_text)
         add_items_window.setWindowModality(Qt.ApplicationModal)
         add_items_window.show()
@@ -132,17 +135,20 @@ class Group(QWidget):
         self.add_widget(voice_object)
 
 
-    def update_image(self):
-        QTreeWidgetItem(self.parent_tree, [str(self.items) + ".png"])
+    def add_image(self):
         clipboard = QApplication.clipboard()
         mime_data = clipboard.mimeData()
         if mime_data.hasImage():
+            image_fname = get_time() + ".png"
+            QTreeWidgetItem(self.parent_tree, [image_fname])
             image = mime_data.imageData()
             img_widget = ImageWidget(self)
             img_widget.set_img(image)
-            image.save(self.group_directory+ "//" + str(self.items) + ".png", "PNG")
-            self.on_group_change.emit(self.group_fname, self.group_title, str(self.items), ".png")
+            image.save(self.group_directory+ "//" + image_fname, "PNG")
             self.add_widget(img_widget)
+            data = json_file.read_data()
+            data[self.group_directory]["items"].append(image_fname)
+            json_file.save_data(data)
 
 
     def add_text(self, font, text):
@@ -152,8 +158,10 @@ class Group(QWidget):
         label = QLabel(self, text=text)
         label.setFont(text_font)
         label.setAlignment(Qt.AlignLeft)
-        self.on_group_change.emit(self.group_fname, font, text, "text-added")
         self.add_widget(label)
+        data = json_file.read_data()
+        data[self.group_directory]["items"].append({"text":text, "font":font})
+        json_file.save_data(data)
 
 
     def load_data(self):
@@ -182,6 +190,7 @@ class Group(QWidget):
 
     def add_widget(self, widget):
         self.box_vlayout.addWidget(widget)
+        self.activate_mainwindow.emit()
 
 
     def editing_title_finished(self, new_group_title):
@@ -207,11 +216,11 @@ class AddDialoge(QDialog):
         self.add_text_button.clicked.connect(self.add_text_method)
 
     def record_audio_method(self):
+        self.close()
         audio_recorder = RecordAudio(self, self.group_file_name)
         audio_recorder.audio_added.connect(lambda audio_name: self.voice_record_added.emit(audio_name))
         audio_recorder.setWindowModality(Qt.ApplicationModal)
         audio_recorder.show()
-        self.close()
     
     def add_clipboard_image(self):
         self.img_from_clib_added.emit()
@@ -248,6 +257,7 @@ class AddText(QDialog):
     
     def save_text(self):
         self.font_changed.emit(self.text_font.toString(), self.text_editor.toPlainText())
+        self.close()
 
 
 class AudioRecorderThread(QThread):
@@ -312,11 +322,11 @@ class RecordAudio(QDialog):
     def save_audio(self):
         self.recorder.requestInterruption()
         self.recorder.save()
-        self.close()
         self.audio_added.emit(self.audio_file_name)
         data = json_file.read_data()
         data[self.group_directory]["items"].append(self.audio_file_name)
         json_file.save_data(data)
+        self.close()
     
     def delete_method(self):
         self.recorder.requestInterruption()
