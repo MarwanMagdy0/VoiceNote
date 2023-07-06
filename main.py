@@ -1,12 +1,14 @@
-from PyQt5.QtWidgets import QMainWindow, QApplication ,QLabel ,QPushButton, QSizePolicy, QTreeWidgetItem, QScrollBar
+from PyQt5.QtWidgets import QMainWindow, QApplication ,QLabel ,QPushButton, QSizePolicy, QTreeWidgetItem
 from PyQt5 import uic
-from widgets import *
+from group import *
 
 
 class UI(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi(SCRIPT_DIRECTORY + "//" + "ui/load.ui",self)
+        uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\load.ui",self)
+        self.setWindowIcon(QIcon(SCRIPT_DIRECTORY + "\\" + 'ui\\data\\icon.png'))
+        self.setWindowTitle(os.path.basename(sys.argv[1]))
         self.layout = self.scrollArea.widget().layout()
         self.scrollArea.widget().setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.scroll_area_bar = self.scrollArea.verticalScrollBar()
@@ -29,7 +31,7 @@ class UI(QMainWindow):
     
 
     def create_new_group(self):
-        group_fname = USER_FILE_DIRECTORY + "//" + get_time()
+        group_fname = USER_FILE_DIRECTORY + "\\" + get_time()
         root = QTreeWidgetItem(self.treeWidget.invisibleRootItem(), [f"Title"])
         json_file[group_fname] = {"group-title":f"Title", "items":[]}
         os.mkdir(group_fname)

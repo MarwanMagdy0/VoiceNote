@@ -1,10 +1,19 @@
+from PyQt5.QtWidgets import QWidget, QLineEdit, QVBoxLayout, QLabel, QDialog, QApplication, QTreeWidgetItem, QFontDialog, QMessageBox
+from PyQt5.QtGui import QPixmap, QImage, QIcon, QFont
+from PyQt5.QtCore import Qt, QTimer, QUrl
+from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
+import os
+from PIL import Image
+from PyQt5 import uic
+import pyaudio
+import wave
 import json
 import os, sys
 import time
 import random
-
 if len(sys.argv)==1:
-    sys.argv.append("C://Users//hp//Desktop//new.vnote")
+    sys.argv.append("C:\\Users\\hp\\Documents\\My_Data\\Python Projects\\Qt\\VoiceNote\\test_folder.vnote")
 
 SCRIPT_DIRECTORY    = os.path.dirname(os.path.realpath(__file__))
 USER_FILE_DIRECTORY = sys.argv[1][:-6] # C:\Users\hp\Desktop\new
