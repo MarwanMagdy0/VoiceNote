@@ -1,10 +1,11 @@
 from utiles import *
 
 class VoiceNote(QWidget):
-    def __init__(self, parent_group, path):
+    def __init__(self, parent_group, group_fname, audio_fname):
         super().__init__(parent_group)
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\voice_note.ui",self)
-        self.path = path
+        self.group_fname = group_fname
+        self.audio_fname = audio_fname
         self.init_audio()
         self.play_pause_button.clicked.connect(self.toggle_playback)
         self.horizontalSlider.sliderMoved.connect(self.set_position)
@@ -12,7 +13,7 @@ class VoiceNote(QWidget):
 
     def init_audio(self):
         self.media_player = QMediaPlayer()
-        audio_url = QUrl.fromLocalFile(self.path)
+        audio_url = QUrl.fromLocalFile(USER_FILE_DIRECTORY + "\\" + self.group_fname + "\\" + self.audio_fname)
         self.media_player.setMedia(QMediaContent(audio_url))
         self.timer = QTimer(self)
         self.timer.setInterval(100)
@@ -65,9 +66,9 @@ class VoiceNote(QWidget):
         if result == QMessageBox.Yes:
             self.deleteLater()
             data = json_file.read_data()
-            data[os.path.dirname(self.path)]["items"].remove(os.path.basename(self.path))
+            data[self.group_fname]["items"].remove(self.audio_fname)
             json_file.save_data(data)
-            os.remove(self.path)
+            os.remove(USER_FILE_DIRECTORY + "\\" + self.group_fname + "\\" + self.audio_fname)
 
 
 class AudioRecorderThread(QThread):
@@ -104,12 +105,12 @@ class AudioRecorderThread(QThread):
 
 class RecordAudio(QDialog):
     audio_added = pyqtSignal(str)
-    def __init__(self, parent_dialoge, group_directory):
+    def __init__(self, parent_dialoge, group_fname):
         super().__init__(parent_dialoge)
-        self.group_directory = group_directory
+        self.group_fname = group_fname
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\record_audio.ui",self)
         self.audio_file_name = get_time() + ".wav"
-        self.recorder = AudioRecorderThread(group_directory+ "\\"+ self.audio_file_name)
+        self.recorder = AudioRecorderThread(USER_FILE_DIRECTORY + "\\" + group_fname+ "\\"+ self.audio_file_name)
         self.record_button.clicked.connect(self.toggle_record_state)
         self.save_button.clicked.connect(self.save_audio)
         self.delete_button.clicked.connect(self.delete_method)
@@ -134,7 +135,7 @@ class RecordAudio(QDialog):
         self.recorder.save()
         self.audio_added.emit(self.audio_file_name)
         data = json_file.read_data()
-        data[self.group_directory]["items"].append(self.audio_file_name)
+        data[self.group_fname]["items"].append(self.audio_file_name)
         json_file.save_data(data)
         self.close()
     

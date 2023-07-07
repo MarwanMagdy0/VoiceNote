@@ -4,13 +4,14 @@ from text_widgets  import *
 
 class Group(QWidget):
     activate_mainwindow = pyqtSignal()
-    def __init__(self, main_window, group_directory, root, parent_tree):
+    group_is_deleted    = pyqtSignal(str)
+    def __init__(self, main_window, group_fname, root, parent_tree):
         super().__init__(main_window)
         self.parent_tree =parent_tree
         self.root = root
         self.main_window = main_window
-        self.group_directory = group_directory
-        self.group_title = json_file[self.group_directory]["group-title"]
+        self.group_fname = group_fname
+        self.group_title = json_file[self.group_fname]["group-title"]
         self.init_ui()
 
 
@@ -20,10 +21,11 @@ class Group(QWidget):
         self.label_layout.addWidget(self.title_label)
         self.title_label.title_updated.connect(self.editing_title_finished)
         self.add_button.clicked.connect(self.add_button_method)
+        self.delete_group_button.clicked.connect(self.delete_group_method)
 
 
     def add_button_method(self):
-        add_items_window = AddDialoge(self, self.group_directory)
+        add_items_window = AddDialoge(self, self.group_fname)
         add_items_window.voice_record_added.connect(self.add_record)
         add_items_window.img_from_clib_added.connect(self.add_image)
         add_items_window.font_changed.connect(self.add_text)
@@ -31,9 +33,9 @@ class Group(QWidget):
         add_items_window.show()
 
 
-    def add_record(self, audio_name):
-        QTreeWidgetItem(self.parent_tree, [audio_name])
-        voice_object = VoiceNote(self,self.group_directory+ "\\" + audio_name)
+    def add_record(self, audio_fname):
+        QTreeWidgetItem(self.parent_tree, [audio_fname])
+        voice_object = VoiceNote(self, self.group_fname, audio_fname)
         self.add_widget(voice_object)
 
 
@@ -46,10 +48,10 @@ class Group(QWidget):
             image = mime_data.imageData()
             img_widget = ImageWidget(self)
             img_widget.set_img(image)
-            image.save(self.group_directory+ "\\" + image_fname, "PNG")
+            image.save(USER_FILE_DIRECTORY + "\\" + self.group_fname+ "\\" + image_fname, "PNG")
             self.add_widget(img_widget)
             data = json_file.read_data()
-            data[self.group_directory]["items"].append(image_fname)
+            data[self.group_fname]["items"].append(image_fname)
             json_file.save_data(data)
 
 
@@ -57,33 +59,35 @@ class Group(QWidget):
         """
         TODO we need to separate text to be a stand alone class
         """
+        ref2text = get_time()
         QTreeWidgetItem(self.parent_tree, [text])
-        normal_text = NormalText(text, font, self.group_directory)
+        normal_text = NormalText(text, font, self.group_fname, ref2text)
         self.add_widget(normal_text)
         data = json_file.read_data()
-        data[self.group_directory]["items"].append({"text":text, "font":font})
+        data[self.group_fname]["items"].append(ref2text + ".ref")
+        data[self.group_fname]["refrences"] = {ref2text :{"text":text, "font":font}}
         json_file.save_data(data)
     
 
     def load_data(self):
         self.title_label.title_label.setText(self.group_title)
-        for item in json_file[self.group_directory]["items"]:
-            if type(item) == dict:
-                text = item["text"]
-                font = item["font"]
+        for item in json_file[self.group_fname]["items"]:
+            if item.endswith(".ref"):
+                text = json_file[self.group_fname]["refrences"][item[:-4]]["text"]
+                font = json_file[self.group_fname]["refrences"][item[:-4]]["font"]
                 QTreeWidgetItem(self.parent_tree, [text])
-                normal_text = NormalText(text, font, self.group_directory)
+                normal_text = NormalText(text, font, self.group_fname, item[:-4])
                 self.add_widget(normal_text)
             
             elif (item.endswith(".wav") or item.endswith(".mp3")):
                 QTreeWidgetItem(self.parent_tree, [item])
-                voice_object = VoiceNote(self, self.group_directory + "\\" + item)
+                voice_object = VoiceNote(self, self.group_fname, item)
                 self.add_widget(voice_object)
 
             elif (item.endswith(".png") or item.endswith(".jpg")):
                 QTreeWidgetItem(self.parent_tree, [item])
                 img_widget = ImageWidget(self)
-                img_widget.load_img(self.group_directory  + "\\" +item)
+                img_widget.load_img(USER_FILE_DIRECTORY + "\\" + self.group_fname  + "\\" +item)
                 self.add_widget(img_widget)
     
 
@@ -96,19 +100,25 @@ class Group(QWidget):
         self.root.setText(0, new_group_title)
         self.group_title = new_group_title
         data = json_file.read_data()
-        data[self.group_directory]["group-title"] = new_group_title
+        data[self.group_fname]["group-title"] = new_group_title
         json_file.save_data(data)
         self.title_label.title_label.setText(new_group_title)
-
-
+    
+    def delete_group_method(self):
+        shutil.rmtree(USER_FILE_DIRECTORY + "\\" + self.group_fname)
+        data = json_file.read_data()
+        data.pop(self.group_fname)
+        json_file.save_data(data)
+        self.deleteLater()
+        self.group_is_deleted.emit(self.group_fname)
 
 class AddDialoge(QDialog):
     voice_record_added  = pyqtSignal(str)
     img_from_clib_added = pyqtSignal()
     font_changed = pyqtSignal(str, str)
-    def __init__(self, parent_group, group_file_name):
+    def __init__(self, parent_group, group_fname):
         super().__init__(parent_group)
-        self.group_file_name = group_file_name
+        self.group_fname = group_fname
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\add_items_to_group.ui",self)
         self.img_from_clib.clicked.connect(self.add_clipboard_image)
         self.img_from_camera.clicked.connect(self.add_camera_img_method)
@@ -117,7 +127,7 @@ class AddDialoge(QDialog):
 
     def record_audio_method(self):
         self.close()
-        audio_recorder = RecordAudio(self, self.group_file_name)
+        audio_recorder = RecordAudio(self, self.group_fname)
         audio_recorder.audio_added.connect(lambda audio_name: self.voice_record_added.emit(audio_name))
         audio_recorder.setWindowModality(Qt.ApplicationModal)
         audio_recorder.show()

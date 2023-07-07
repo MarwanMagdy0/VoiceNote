@@ -12,6 +12,7 @@ import json
 import os, sys
 import time
 import random
+import shutil
 if len(sys.argv)==1:
     sys.argv.append("C:\\Users\\hp\\Documents\\My_Data\\Python Projects\\Qt\\VoiceNote\\test_folder.vnote")
 
@@ -66,7 +67,7 @@ class JsonIt:
 def get_time():
     return str(int(time.time() + 0.5 )) 
 
-init_group = {"group-title":"Title", "items":[]}
+init_group = {"group-title":"Title", "items":[], "refrences":{}}
 
 # Checking if the .vnote file is not empty and if it was , dump the initial directory data to it
 with open(sys.argv[1], "r") as f:
