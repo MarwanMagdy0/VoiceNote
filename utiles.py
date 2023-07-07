@@ -77,6 +77,16 @@ with open(sys.argv[1], "r") as f:
             os.mkdir(USER_FILE_DIRECTORY)
 
 
+def message_box() -> bool:
+    msg_box = QMessageBox()
+    msg_box.setIcon(QMessageBox.Question)
+    msg_box.setText("Are you sure you want to delete?")
+    msg_box.setWindowTitle("Confirmation")
+    msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+    result = msg_box.exec_()
+    return result == QMessageBox.Yes
+
+
 json_file = JsonIt(sys.argv[1])
 if __name__ == "__main__":
     print(USER_FILE_DIRECTORY)

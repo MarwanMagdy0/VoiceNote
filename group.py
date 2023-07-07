@@ -105,12 +105,13 @@ class Group(QWidget):
         self.title_label.title_label.setText(new_group_title)
     
     def delete_group_method(self):
-        shutil.rmtree(USER_FILE_DIRECTORY + "\\" + self.group_fname)
-        data = json_file.read_data()
-        data.pop(self.group_fname)
-        json_file.save_data(data)
-        self.deleteLater()
-        self.group_is_deleted.emit(self.group_fname)
+        if message_box():
+            shutil.rmtree(USER_FILE_DIRECTORY + "\\" + self.group_fname)
+            data = json_file.read_data()
+            data.pop(self.group_fname)
+            json_file.save_data(data)
+            self.deleteLater()
+            self.group_is_deleted.emit(self.group_fname)
 
 class AddDialoge(QDialog):
     voice_record_added  = pyqtSignal(str)
@@ -120,6 +121,11 @@ class AddDialoge(QDialog):
         super().__init__(parent_group)
         self.group_fname = group_fname
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\add_items_to_group.ui",self)
+        self.img_from_clib.setLayoutDirection(Qt.RightToLeft)
+        self.img_from_camera.setLayoutDirection(Qt.RightToLeft)
+        self.record_audio_button.setLayoutDirection(Qt.RightToLeft)
+        self.add_text_button.setLayoutDirection(Qt.RightToLeft)
+
         self.img_from_clib.clicked.connect(self.add_clipboard_image)
         self.img_from_camera.clicked.connect(self.add_camera_img_method)
         self.record_audio_button.clicked.connect(self.record_audio_method)

@@ -7,25 +7,29 @@
     <x>0</x>
     <y>0</y>
     <width>881</width>
-    <height>633</height>
+    <height>617</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">
+   <string notr="true">* {
+	background-color: #1e1e1e;
+	color: #ffffff;
+}
+
 QPushButton {
 	font: 63 20pt &quot;JetBrains Mono NL SemiBold&quot;;
-background-color: #03DAC6;
-border: 1px solid #03DAC6;
-border-radius: 20px;
-color: #FFFFFF;
+	background-color: #9a9ef9;
+	border: 1px solid #9a9ef9;
+	border-radius: 20px;
+	color: #FFFFFF;
 }
 QPushButton:hover {
     border-radius:20px;
-	
-	background-color: rgb(28, 77, 255);
+	border: 1px solid #7070d0;
+	background-color: #7070d0;
     color: white;
 }
 
@@ -38,7 +42,31 @@ QPushButton:pressed {
     
 	background-color: rgb(85, 0, 255);
     color: white;
-}</string>
+}
+QHeaderView::section {
+ background-color: #303030;
+border:none;
+ }
+
+QScrollBar:vertical {
+        background-color: #333333;
+        width: 10px;
+    }
+    QScrollBar::handle:vertical {
+        background-color: #555555;
+        min-height: 20px;
+    }
+    QScrollBar::handle:vertical:hover {
+        background-color: #777777;
+    }
+    QScrollBar::add-line:vertical,
+    QScrollBar::sub-line:vertical {
+        background: none;
+    }
+    QScrollBar::add-page:vertical,
+    QScrollBar::sub-page:vertical {
+        background: none;
+    }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
@@ -59,11 +87,16 @@ QPushButton:pressed {
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">font: 63 12pt &quot;JetBrains Mono SemiBold&quot;;</string>
+         <string notr="true">font: 63 12pt &quot;JetBrains Mono SemiBold&quot;;
+background-color: rgb(48, 48, 48);
+border: 3px solid #303030;
+border-radius: 10px;
+
+</string>
         </property>
         <column>
          <property name="text">
-          <string>ID</string>
+          <string>Group Titles</string>
          </property>
         </column>
        </widget>
@@ -72,7 +105,7 @@ QPushButton:pressed {
        <widget class="QPushButton" name="add_new_group_button">
         <property name="styleSheet">
          <string notr="true">font: 63 12pt &quot;JetBrains Mono NL SemiBold&quot;;
-border: 1px solid #03DAC6;
+border: 1px solid #7070d0;
 border-radius: 10px;
 </string>
         </property>
@@ -91,6 +124,10 @@ border-radius: 10px;
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="styleSheet">
+       <string notr="true">border:none;
+padding:1px</string>
+      </property>
       <property name="verticalScrollBarPolicy">
        <enum>Qt::ScrollBarAsNeeded</enum>
       </property>
@@ -106,7 +143,7 @@ border-radius: 10px;
          <x>0</x>
          <y>0</y>
          <width>653</width>
-         <height>613</height>
+         <height>597</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout"/>

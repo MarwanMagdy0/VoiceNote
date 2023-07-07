@@ -57,13 +57,7 @@ class VoiceNote(QWidget):
     
 
     def delete_widget(self):
-        msg_box = QMessageBox()
-        msg_box.setIcon(QMessageBox.Question)
-        msg_box.setText("Are you sure you want to delete?")
-        msg_box.setWindowTitle("Confirmation")
-        msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        result = msg_box.exec_()
-        if result == QMessageBox.Yes:
+        if message_box():
             self.deleteLater()
             data = json_file.read_data()
             data[self.group_fname]["items"].remove(self.audio_fname)

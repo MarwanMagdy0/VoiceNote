@@ -15,6 +15,7 @@
   </property>
   <property name="styleSheet">
    <string notr="true">font: 63 16pt &quot;JetBrains Mono NL SemiBold&quot;;
+background-color: rgb(48, 48, 48);
 </string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -38,10 +39,17 @@
      <property name="text">
       <string>Title</string>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="line_edit"/>
+    <widget class="QLineEdit" name="line_edit">
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

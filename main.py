@@ -36,7 +36,6 @@ class UI(QMainWindow):
     
 
     def create_new_group(self):
-        # TODO implement the timer that waits for group init 1 sec
         self.add_new_group_button.setEnabled(False)
         group_fname = get_time()
         group_directory = USER_FILE_DIRECTORY + "\\" + group_fname
