@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>543</width>
-    <height>89</height>
+    <width>626</width>
+    <height>198</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@ background-color: rgb(30, 30, 30);
 border:none;
 }
 QPushButton {
-	font: 63 20pt &quot;JetBrains Mono NL SemiBold&quot;;
+	font: 63 8pt &quot;JetBrains Mono NL SemiBold&quot;;
 	background-color: #9a9ef9;
 	border: 1px solid #9a9ef9;
 	border-radius: 20px;
@@ -41,11 +41,49 @@ QPushButton:pressed {
     
 	background-color: rgb(85, 0, 255);
     color: white;
-}</string>
+}
+
+
+            QCheckBox {
+			font: 63 8pt &quot;JetBrains Mono NL SemiBold&quot;;
+                background-color: #9a9ef9;
+                border: 1px solid #9a9ef9;
+                border-radius: 20px;
+                color: #FFFFFF;
+            }
+
+            QCheckBox:hover {
+                border-radius: 20px;
+                border: 1px solid #7070d0;
+                background-color: #7070d0;
+                color: white;
+            }
+
+            QCheckBox:disabled {
+                background-color: gray;
+                color: white;
+            }
+
+            QCheckBox:checked {
+                background-color: rgb(85, 0, 255);
+                color: white;
+            }</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <widget class="QTextEdit" name="text_editor">
+     <property name="minimumSize">
+      <size>
+       <width>500</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>1000</width>
+       <height>16777215</height>
+      </size>
+     </property>
      <property name="styleSheet">
       <string notr="true">* {
 	background-color: rgb(48, 48, 48);
@@ -60,63 +98,131 @@ border-radius: 10px;
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="font_button">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Font</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QPushButton" name="delete_button">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset>
-       <normaloff>data/bin.png</normaloff>data/bin.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>50</width>
-       <height>50</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QPushButton" name="save_button">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset>
-       <normaloff>data/icons8-save-50.png</normaloff>data/icons8-save-50.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>50</width>
-       <height>50</height>
-      </size>
-     </property>
-    </widget>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QPushButton" name="save_button">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>data/icons8-save-50.png</normaloff>data/icons8-save-50.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="font_button">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Font</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkbox">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">padding:15px;</string>
+       </property>
+       <property name="text">
+        <string>center</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="delete_button">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>data/bin.png</normaloff>data/bin.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>25</width>
+         <height>25</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

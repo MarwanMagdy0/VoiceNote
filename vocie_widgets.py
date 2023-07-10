@@ -103,6 +103,7 @@ class RecordAudio(QDialog):
         super().__init__(parent_dialoge)
         self.group_fname = group_fname
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\record_audio.ui",self)
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.audio_file_name = get_time() + ".wav"
         self.recorder = AudioRecorderThread(USER_FILE_DIRECTORY + "\\" + group_fname+ "\\"+ self.audio_file_name)
         self.record_button.clicked.connect(self.toggle_record_state)

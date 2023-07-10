@@ -16,7 +16,7 @@ class UI(QMainWindow):
         self.groups = []
         self.load_directory_to_ui()
         self.treeWidget.itemClicked.connect(self.handle_item_clicked)
-
+        # Timer to control seconds after creating new group
         self.timer = QTimer()
         self.timer.setInterval(1000)
         self.timer.timeout.connect(lambda: self.add_new_group_button.setEnabled(True))
@@ -66,6 +66,7 @@ class UI(QMainWindow):
     def resizeEvent(self, event):
         # TODO try to resize images when ever this happens
         pass
+
 
     def handle_item_clicked(self, item, column):
         index = self.treeWidget.indexOfTopLevelItem(item)

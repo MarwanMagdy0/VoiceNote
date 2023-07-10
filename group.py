@@ -28,6 +28,7 @@ class Group(QWidget):
         add_items_window = AddDialoge(self, self.group_fname)
         add_items_window.voice_record_added.connect(self.add_record)
         add_items_window.img_from_clib_added.connect(self.add_image)
+        add_items_window.separator_is_added.connect(self.add_separator)
         add_items_window.font_changed.connect(self.add_text)
         add_items_window.setWindowModality(Qt.ApplicationModal)
         add_items_window.show()
@@ -55,17 +56,27 @@ class Group(QWidget):
             json_file.save_data(data)
 
 
-    def add_text(self, font, text):
-        """
-        TODO we need to separate text to be a stand alone class
-        """
-        ref2text = get_time()
+    def add_text(self, font, text, is_centered):
+        if font == "null" and text == "null" and is_centered == False:
+            self.activate_mainwindow.emit()
+            return
+        ref2text = get_time() + ".ref"
         QTreeWidgetItem(self.parent_tree, [text])
         normal_text = NormalText(text, font, self.group_fname, ref2text)
+        if is_centered:
+            normal_text.label.setAlignment(Qt.AlignCenter)
         self.add_widget(normal_text)
         data = json_file.read_data()
-        data[self.group_fname]["items"].append(ref2text + ".ref")
-        data[self.group_fname]["refrences"] = {ref2text :{"text":text, "font":font}}
+        data[self.group_fname]["items"].append(ref2text)
+        data[self.group_fname]["refrences"][ref2text] = {"text":text, "font":font, "is-centered":is_centered}
+        json_file.save_data(data)
+
+    
+    def add_separator(self):
+        separator_name = get_time() + ".separator"
+        self.add_widget(QHSeparationLine(self.group_fname, separator_name))
+        data = json_file.read_data()
+        data[self.group_fname]["items"].append(separator_name)
         json_file.save_data(data)
     
 
@@ -73,10 +84,13 @@ class Group(QWidget):
         self.title_label.title_label.setText(self.group_title)
         for item in json_file[self.group_fname]["items"]:
             if item.endswith(".ref"):
-                text = json_file[self.group_fname]["refrences"][item[:-4]]["text"]
-                font = json_file[self.group_fname]["refrences"][item[:-4]]["font"]
+                text = json_file[self.group_fname]["refrences"][item]["text"]
+                font = json_file[self.group_fname]["refrences"][item]["font"]
+                is_centered = json_file[self.group_fname]["refrences"][item]["is-centered"]
                 QTreeWidgetItem(self.parent_tree, [text])
-                normal_text = NormalText(text, font, self.group_fname, item[:-4])
+                normal_text = NormalText(text, font, self.group_fname, item)
+                if is_centered:
+                    normal_text.label.setAlignment(Qt.AlignCenter)
                 self.add_widget(normal_text)
             
             elif (item.endswith(".wav") or item.endswith(".mp3")):
@@ -89,6 +103,10 @@ class Group(QWidget):
                 img_widget = ImageWidget(self)
                 img_widget.load_img(USER_FILE_DIRECTORY + "\\" + self.group_fname  + "\\" +item)
                 self.add_widget(img_widget)
+            
+            elif item.endswith(".separator"):
+                separator_object = QHSeparationLine(self.group_fname, item)
+                self.add_widget(separator_object)
     
 
     def add_widget(self, widget):
@@ -116,20 +134,24 @@ class Group(QWidget):
 class AddDialoge(QDialog):
     voice_record_added  = pyqtSignal(str)
     img_from_clib_added = pyqtSignal()
-    font_changed = pyqtSignal(str, str)
+    font_changed = pyqtSignal(str, str, bool)
+    separator_is_added = pyqtSignal()
     def __init__(self, parent_group, group_fname):
         super().__init__(parent_group)
         self.group_fname = group_fname
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\add_items_to_group.ui",self)
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.img_from_clib.setLayoutDirection(Qt.RightToLeft)
         self.img_from_camera.setLayoutDirection(Qt.RightToLeft)
         self.record_audio_button.setLayoutDirection(Qt.RightToLeft)
         self.add_text_button.setLayoutDirection(Qt.RightToLeft)
+        self.separator_button.setLayoutDirection(Qt.RightToLeft)
 
         self.img_from_clib.clicked.connect(self.add_clipboard_image)
         self.img_from_camera.clicked.connect(self.add_camera_img_method)
         self.record_audio_button.clicked.connect(self.record_audio_method)
         self.add_text_button.clicked.connect(self.add_text_method)
+        self.separator_button.clicked.connect(self.add_separator_method)
 
     def record_audio_method(self):
         self.close()
@@ -144,12 +166,16 @@ class AddDialoge(QDialog):
     
     def add_text_method(self):
         add_text = AddText(self)
-        add_text.font_changed.connect(lambda font, text : self.font_changed.emit(font, text))
+        add_text.font_changed.connect(lambda font, text, is_centered : self.font_changed.emit(font, text, is_centered))
         add_text.setWindowModality(Qt.ApplicationModal)
         add_text.show()
         self.close()
 
     def add_camera_img_method(self):
+        self.close()
+    
+    def add_separator_method(self):
+        self.separator_is_added.emit()
         self.close()
 
 

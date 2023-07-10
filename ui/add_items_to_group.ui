@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>306</height>
+    <height>332</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -137,6 +137,23 @@ QPushButton:pressed {
      <property name="icon">
       <iconset>
        <normaloff>data/text.png</normaloff>data/text.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>25</width>
+       <height>25</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="separator_button">
+     <property name="text">
+      <string>Separator</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>data/separator.png</normaloff>data/separator.png</iconset>
      </property>
      <property name="iconSize">
       <size>
