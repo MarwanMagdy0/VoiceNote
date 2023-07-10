@@ -7,38 +7,159 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>332</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">* {
+	background-color: rgb(48, 48, 48);
+border: 3px solid #303030;
+border-radius: 10px;
+
+}
+
+
+QPushButton {
+text-align: left;
+	padding: 15px;
+	font: 63 15pt &quot;JetBrains Mono NL SemiBold&quot;;
+background-color: #9a9ef9;
+border: 1px solid #9a9ef9;
+border-radius: 20px;
+color: #FFFFFF;
+}
+QPushButton:hover {
+    border-radius:20px;
+	border: 1px solid #7070d0;
+	background-color: #7070d0;
+    color: white;
+}
+
+QPushButton:disabled {
+    background-color: gray;
+    color: white;
+}
+
+QPushButton:pressed {
+    
+	background-color: rgb(85, 0, 255);
+    color: white;
+}
+</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QPushButton" name="img_from_clib">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
-      <string>add image from cliboard</string>
+      <string notr="true">add image from cliboard</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>data/clipboard.png</normaloff>data/clipboard.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>25</width>
+       <height>25</height>
+      </size>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QPushButton" name="img_from_camera">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string>add image from camera</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>data/cam.png</normaloff>data/cam.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>25</width>
+       <height>25</height>
+      </size>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QPushButton" name="record_audio_button">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
-      <string>record audio</string>
+      <string notr="true">record audio</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>data/mic.png</normaloff>data/mic.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>25</width>
+       <height>25</height>
+      </size>
+     </property>
+     <property name="autoDefault">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QPushButton" name="add_text_button">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string>add text</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>data/text.png</normaloff>data/text.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>25</width>
+       <height>25</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="separator_button">
+     <property name="text">
+      <string>Separator</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>data/separator.png</normaloff>data/separator.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>25</width>
+       <height>25</height>
+      </size>
      </property>
     </widget>
    </item>

@@ -1,92 +1,77 @@
-from PyQt5.QtWidgets import QMainWindow, QApplication ,QLabel ,QPushButton, QSizePolicy, QTreeWidgetItem, QScrollBar
+from PyQt5.QtWidgets import QMainWindow, QApplication ,QLabel ,QPushButton, QSizePolicy, QTreeWidgetItem
 from PyQt5 import uic
-from widgets import *
+from group import *
 
-main_directory = "test_folder"
-initial_structure = {"0":{"group-name":"Title_0", "items":[]}}
-
-if len(sys.argv)==2:
-    main_directory = sys.argv[1]
-
-if not os.path.isdir(main_directory):
-    os.mkdir(main_directory)
-    os.mkdir(main_directory + "//" + get_time())
 
 class UI(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.json_file = JsonIt(main_directory + ".vnote")
-        self.file_structure = self.json_file.read_data()
-        self.groups = {}
-        if self.file_structure == {}:
-            self.file_structure = initial_structure
-            self.json_file.save_data(initial_structure)
-
-        uic.loadUi(SCRIPT_DIRECTORY + "ui/load.ui",self)
+        uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\load.ui",self)
+        self.setWindowIcon(QIcon(SCRIPT_DIRECTORY + "\\" + 'ui\\data\\icon.png'))
+        self.setWindowTitle(os.path.basename(sys.argv[1]))
         self.layout = self.scrollArea.widget().layout()
         self.scrollArea.widget().setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.scroll_area_bar = self.scrollArea.verticalScrollBar()
         self.add_new_group_button.clicked.connect(self.create_new_group)
+        self.groups = []
         self.load_directory_to_ui()
         self.treeWidget.itemClicked.connect(self.handle_item_clicked)
+        # Timer to control seconds after creating new group
+        self.timer = QTimer()
+        self.timer.setInterval(1000)
+        self.timer.timeout.connect(lambda: self.add_new_group_button.setEnabled(True))
 
 
     def load_directory_to_ui(self):
-        for group_fname in self.file_structure.keys():
-            root = QTreeWidgetItem(self.treeWidget.invisibleRootItem(), [self.file_structure[group_fname]["group-name"]])
-            group = Group(self, main_directory, group_fname, self.file_structure[group_fname], root, self.treeWidget.topLevelItem(int(group_fname)))
-            self.groups[group_fname] = group
-            group.on_group_change.connect(self.update_group)
+        for group_fname in json_file.keys():
+            root = QTreeWidgetItem(self.treeWidget.invisibleRootItem(), [json_file[group_fname]["group-title"]])
+            group = Group(self, group_fname, root, self.treeWidget.topLevelItem(len(self.groups)))
+            group.group_is_deleted.connect(self.delete_group)
             self.layout.addWidget(group)
             group.load_data()
+            group.activate_mainwindow.connect(self.activateWindow)
             self.scroll_area_bar.setMaximum(2147483647)
             self.scroll_area_bar.setValue(self.scroll_area_bar.maximum())
-
-
-    def update_group(self, group_fname, group_name, items, file_type):
-        self.activateWindow()
-        if file_type == "name-changed":
-            self.file_structure[group_fname]["group-name"] = group_name
-        
-        elif file_type == "text-added":
-            self.file_structure[group_fname]["items"].append({"text":items, "font":group_name})
-            
-        elif file_type == ".wav" or file_type == ".png":
-            self.file_structure[group_fname]["items"].append(items + file_type)
-        
-        self.json_file.save_data(self.file_structure)
+            self.groups.append(group)
     
 
     def create_new_group(self):
-        group_fname = int([name for name in self.file_structure.keys()][-1]) + 1 # to get the added group name
-        root = QTreeWidgetItem(self.treeWidget.invisibleRootItem(), [f"Title_{group_fname}"])
-        self.file_structure[str(group_fname)] = {"group-name":f"Title_{group_fname}", "items":[]}
-        group = Group(self, main_directory, str(group_fname), self.file_structure[str(group_fname)], root, self.treeWidget.topLevelItem(int(group_fname)))
-        group.on_group_change.connect(self.update_group)
-        os.mkdir(main_directory + "//" + str(group_fname))
+        self.add_new_group_button.setEnabled(False)
+        group_fname = get_time()
+        group_directory = USER_FILE_DIRECTORY + "\\" + group_fname
+        root = QTreeWidgetItem(self.treeWidget.invisibleRootItem(), [f"Title"])
+        json_file[group_fname] = init_group
+        os.mkdir(group_directory)
+        group = Group(self, group_fname, root, self.treeWidget.topLevelItem(len(self.groups)))
+        group.group_is_deleted.connect(self.delete_group)
         self.layout.addWidget(group)
-        self.groups[str(group_fname)] = group
-        self.json_file.save_data(self.file_structure)
-        self.scroll_area_bar.update()
         self.scroll_area_bar.setMaximum(self.scroll_area_bar.maximum()+200)
         self.scroll_area_bar.setValue(self.scroll_area_bar.maximum())
-    
+        self.groups.append(group)
+        self.timer.start()
+            
+
+    def delete_group(self, group_fname):
+        group_to_delete = None
+        group_index = 0
+        for i, group in enumerate(self.groups):
+            if group.group_fname == group_fname:
+                group_index = i
+                break
+        
+        self.groups.pop(group_index)
+        self.treeWidget.takeTopLevelItem(group_index) 
+
+
     def resizeEvent(self, event):
         # TODO try to resize images when ever this happens
         pass
 
-    def handle_item_clicked(self, item, column):
-        find_widget = [None, item.text(column)]
-        parent_text = item.text(column)
-        if item.parent():
-            parent_text = item.parent().text(0)
 
-        for i in range(self.treeWidget.topLevelItemCount()):
-            top_level_item = self.treeWidget.topLevelItem(i)
-            if top_level_item.text(0) == parent_text:
-                find_widget[0] = i
-                break
-        self.scroll_area_bar.setValue(self.groups[str(find_widget[0])].y())
+    def handle_item_clicked(self, item, column):
+        index = self.treeWidget.indexOfTopLevelItem(item)
+        if index != -1:
+            self.scroll_area_bar.setValue(self.groups[index].y())
         
 
 app = QApplication([])
