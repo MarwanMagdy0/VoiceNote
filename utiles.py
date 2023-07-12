@@ -15,6 +15,8 @@ import random
 import shutil
 import cv2
 import numpy as np
+import gc
+import threading
 if len(sys.argv)==1:
     sys.argv.append("C:\\Users\\hp\\Documents\\My_Data\\Python Projects\\Qt\\VoiceNote\\test_folder.vnote")
 
@@ -69,6 +71,32 @@ class JsonIt:
 def get_time():
     return str(int(time.time() + 0.5 )) 
 
+class GarbageCollector:
+    def __init__(self):
+        self.run = True
+        self.time_interval = 5
+        self.interrupt_event = threading.Event()
+        self.thread = threading.Thread(target=self._collect)
+
+    def start(self):
+        self.thread.start()
+
+    def _collect(self):
+        while self.run:
+            print("collected")
+            gc.collect()
+            # Sleep until interrupted or duration elapses
+            self.interrupt_event.wait(self.time_interval)
+            self.interrupt_event.clear()
+
+    def stop(self):
+        self.run = False
+        self.interrupt_event.set()
+        self.thread.join()
+
+collector = GarbageCollector()
+collector.start()
+
 init_group = {"group-title":"Title", "items":[], "refrences":{}}
 
 # Checking if the .vnote file is not empty and if it was , dump the initial directory data to it
@@ -107,6 +135,7 @@ class QHSeparationLine(QFrame):
                 data = json_file.read_data()
                 data[self.group_fname]["items"].remove(self.separator_name)
                 json_file.save_data(data)
+
 
 
 json_file = JsonIt(sys.argv[1])

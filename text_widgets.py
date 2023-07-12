@@ -9,6 +9,7 @@ class AddText(QDialog):
         super().__init__(parent)
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\add_text.ui", self)
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        self.setAttribute(Qt.WA_DeleteOnClose)
         self.font_button.clicked.connect(self.choose_font)
         self.save_button.clicked.connect(self.save_text)
         self.text_editor.setFont(initial_font)
@@ -31,6 +32,7 @@ class AddText(QDialog):
 class NormalText(QWidget):
     def __init__(self, text, font_str, group_fname, ref2text):
         super().__init__()
+        self.setAttribute(Qt.WA_DeleteOnClose)
         self.ref2text = ref2text
         self.group_fname = group_fname
         layout = QVBoxLayout(self)
@@ -77,6 +79,7 @@ class EditText(QDialog):
         self.group_fname = group_fname
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\edit_text.ui", self)
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        self.setAttribute(Qt.WA_DeleteOnClose)
         self.text_editor.setText(text)
         self.text_editor.setFont(self.text_font)
         self.font_button.clicked.connect(self.choose_font)

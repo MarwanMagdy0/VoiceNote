@@ -45,6 +45,7 @@ class EditImage(QDialog):
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\edit_image.ui",self)
         self.setWindowTitle("Image Editor")
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        self.setAttribute(Qt.WA_DeleteOnClose)
         self.group_fname = group_fname
         self.image_fname = image_fname
         self.pixmap = QPixmap(USER_FILE_DIRECTORY + "\\" + self.group_fname + "\\" + self.image_fname)
@@ -108,10 +109,19 @@ class EditImage(QDialog):
             self.edit_frame[y - self.selection_width * 3//2:y+self.selection_width * 3//2, x- self.selection_width * 3//2:x+self.selection_width * 3//2] = self.src_frame[y - self.selection_width * 3//2:y+self.selection_width * 3//2, x - self.selection_width * 3//2:x+self.selection_width * 3//2]
             self.set_image_from_frame(self.edit_frame)
 
-    def mouseReleaseEvent(self, event):
-            if event.button() == Qt.LeftButton:
-                self.points_buffer = []
 
+    def mouseReleaseEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.points_buffer = []
+    
+
+    def delete_attributes(self):
+        class_dict = vars(self.__class__)
+
+        for attr_name in class_dict:
+            if attr_name != '__class__':
+                delattr(self, attr_name)
+    
 
 
 class CameraCapture(QDialog):

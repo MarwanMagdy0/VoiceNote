@@ -13,6 +13,7 @@ class Group(QWidget):
         self.group_fname = group_fname
         self.group_title = json_file[self.group_fname]["group-title"]
         self.init_ui()
+        self.setAttribute(Qt.WA_DeleteOnClose)
 
 
     def init_ui(self):
@@ -63,10 +64,12 @@ class Group(QWidget):
             img_widget.load_img(USER_FILE_DIRECTORY + "\\" + self.group_fname + "\\" + image_fname)
             self.add_widget(img_widget)
 
+
     def add_text(self, font, text, is_centered):
         if font == "null" and text == "null" and is_centered == False:
             self.activate_mainwindow.emit()
             return
+        
         ref2text = get_time() + ".ref"
         QTreeWidgetItem(self.parent_tree, [text])
         normal_text = NormalText(text, font, self.group_fname, ref2text)
@@ -149,6 +152,7 @@ class AddDialoge(QDialog):
         self.group_fname = group_fname
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\add_items_to_group.ui",self)
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        self.setAttribute(Qt.WA_DeleteOnClose)
         self.img_from_clib.setLayoutDirection(Qt.RightToLeft)
         self.img_from_camera.setLayoutDirection(Qt.RightToLeft)
         self.record_audio_button.setLayoutDirection(Qt.RightToLeft)
@@ -200,6 +204,8 @@ class EditableLabel(QWidget):
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\label_edit.ui",self)
         self.line_edit.editingFinished.connect(self.finish_editing)
         self.line_edit.hide()
+        self.setAttribute(Qt.WA_DeleteOnClose)
+        
     def mouseDoubleClickEvent(self, event):
         if self.line_edit.isHidden():
             self.title_label.hide()

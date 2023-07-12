@@ -4,6 +4,7 @@ class VoiceNote(QWidget):
     def __init__(self, parent_group, group_fname, audio_fname):
         super().__init__(parent_group)
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\voice_note.ui",self)
+        self.setAttribute(Qt.WA_DeleteOnClose)
         self.group_fname = group_fname
         self.audio_fname = audio_fname
         self.init_audio()
@@ -79,7 +80,7 @@ class AudioRecorderThread(QThread):
         RATE = 44100
         self.CHUNK = 1024
         self.stream = self.audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=self.CHUNK)
-
+        
     def run(self):
         while not self.isInterruptionRequested():
             data = self.stream.read(self.CHUNK)
@@ -104,6 +105,7 @@ class RecordAudio(QDialog):
         self.group_fname = group_fname
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\record_audio.ui",self)
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        self.setAttribute(Qt.WA_DeleteOnClose)
         self.audio_file_name = get_time() + ".wav"
         self.recorder = AudioRecorderThread(USER_FILE_DIRECTORY + "\\" + group_fname+ "\\"+ self.audio_file_name)
         self.record_button.clicked.connect(self.toggle_record_state)
