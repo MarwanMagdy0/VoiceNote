@@ -30,6 +30,7 @@ class Group(QWidget):
         add_items_window.img_from_clib_added.connect(self.add_image)
         add_items_window.separator_is_added.connect(self.add_separator)
         add_items_window.font_changed.connect(self.add_text)
+        add_items_window.image_is_saved_from_camera.connect(self.add_image_from_camera_method)
         add_items_window.setWindowModality(Qt.ApplicationModal)
         add_items_window.show()
 
@@ -47,14 +48,20 @@ class Group(QWidget):
             image_fname = get_time() + ".png"
             QTreeWidgetItem(self.parent_tree, [image_fname])
             image = mime_data.imageData()
-            img_widget = ImageWidget(self)
+            img_widget = ImageWidget(self, self.group_fname, image_fname)
             img_widget.set_img(image)
             image.save(USER_FILE_DIRECTORY + "\\" + self.group_fname+ "\\" + image_fname, "PNG")
             self.add_widget(img_widget)
             data = json_file.read_data()
             data[self.group_fname]["items"].append(image_fname)
             json_file.save_data(data)
+    
 
+    def add_image_from_camera_method(self, image_fname):
+            QTreeWidgetItem(self.parent_tree, [image_fname])
+            img_widget = ImageWidget(self, self.group_fname, image_fname)
+            img_widget.load_img(USER_FILE_DIRECTORY + "\\" + self.group_fname + "\\" + image_fname)
+            self.add_widget(img_widget)
 
     def add_text(self, font, text, is_centered):
         if font == "null" and text == "null" and is_centered == False:
@@ -100,7 +107,7 @@ class Group(QWidget):
 
             elif (item.endswith(".png") or item.endswith(".jpg")):
                 QTreeWidgetItem(self.parent_tree, [item])
-                img_widget = ImageWidget(self)
+                img_widget = ImageWidget(self, self.group_fname, item)
                 img_widget.load_img(USER_FILE_DIRECTORY + "\\" + self.group_fname  + "\\" +item)
                 self.add_widget(img_widget)
             
@@ -136,6 +143,7 @@ class AddDialoge(QDialog):
     img_from_clib_added = pyqtSignal()
     font_changed = pyqtSignal(str, str, bool)
     separator_is_added = pyqtSignal()
+    image_is_saved_from_camera = pyqtSignal(str)
     def __init__(self, parent_group, group_fname):
         super().__init__(parent_group)
         self.group_fname = group_fname
@@ -165,15 +173,20 @@ class AddDialoge(QDialog):
         self.close()
     
     def add_text_method(self):
+        self.close()
         add_text = AddText(self)
         add_text.font_changed.connect(lambda font, text, is_centered : self.font_changed.emit(font, text, is_centered))
         add_text.setWindowModality(Qt.ApplicationModal)
         add_text.show()
-        self.close()
 
     def add_camera_img_method(self):
-        self.close()
-    
+        self.close() 
+        image_fname = get_time() + ".png"
+        camera_capture = CameraCapture(self, self.group_fname)
+        camera_capture.image_is_saved_from_camera.connect(self.image_is_saved_from_camera)
+        camera_capture.setWindowModality(Qt.ApplicationModal)
+        camera_capture.show()
+        
     def add_separator_method(self):
         self.separator_is_added.emit()
         self.close()
