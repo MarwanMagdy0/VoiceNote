@@ -83,9 +83,7 @@ class GarbageCollector:
 
     def _collect(self):
         while self.run:
-            print("collected")
             gc.collect()
-            # Sleep until interrupted or duration elapses
             self.interrupt_event.wait(self.time_interval)
             self.interrupt_event.clear()
 

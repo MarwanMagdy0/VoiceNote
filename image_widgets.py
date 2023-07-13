@@ -58,6 +58,7 @@ class EditImage(QDialog):
         self.image.mouseMoveEvent = self.mouse_moved_over_image
         self.points_buffer = []
         self.selection_width = 5
+        self.cropping_mode = False
 
 
     def save_image_method(self):
@@ -115,14 +116,6 @@ class EditImage(QDialog):
             self.points_buffer = []
     
 
-    def delete_attributes(self):
-        class_dict = vars(self.__class__)
-
-        for attr_name in class_dict:
-            if attr_name != '__class__':
-                delattr(self, attr_name)
-    
-
 
 class CameraCapture(QDialog):
     image_is_deleted = pyqtSignal()
@@ -132,6 +125,7 @@ class CameraCapture(QDialog):
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\open_camera.ui",self)
         self.setWindowTitle("Image Editor")
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        self.setAttribute(Qt.WA_DeleteOnClose)
         self.group_fname = group_fname
         self.pause_stream_button.clicked.connect(self.pause_stream_method)
         self.save_image_button.clicked.connect(self.save_image_method)

@@ -2,7 +2,6 @@ from PyQt5.QtWidgets import QMainWindow, QApplication ,QLabel ,QPushButton, QSiz
 from PyQt5 import uic
 from group import *
 
-
 class UI(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -61,11 +60,6 @@ class UI(QMainWindow):
         
         self.groups.pop(group_index)
         self.treeWidget.takeTopLevelItem(group_index) 
-
-
-    def resizeEvent(self, event):
-        # TODO try to resize images when ever this happens
-        pass
 
 
     def handle_item_clicked(self, item, column):
