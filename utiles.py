@@ -23,49 +23,32 @@ if len(sys.argv)==1:
 SCRIPT_DIRECTORY    = os.path.dirname(os.path.realpath(__file__))
 USER_FILE_DIRECTORY = sys.argv[1][:-6] # C:\Users\hp\Desktop\new
 
-class JsonIt:
-    def __init__(self,file_directory):
-        self.file_directory = file_directory
-        try:
-            f=open(f'{self.file_directory}','r')
-            data=json.load(f)
-            f.close()
-        except:
-            data = {}
-            dump =json.dumps(data)
-            file = open(f'{file_directory}','w')
-            file.write(dump)
-            file.close()
+class HandleJsonFiles:
+    def __init__(self, file_path):
+        self.file_path = file_path
+        self.file_directory = os.path.dirname(self.file_path) + "\\" + os.path.basename(self.file_path).split(".")[0]
+        if not os.path.isfile(self.file_path):
+            self.save_data({})
 
-    def save_data(self,Data):
-        with open(f'{self.file_directory}','w') as f:
-            dic=json.dumps(Data)
-            f.write(dic)
+    def save_data(self, data):
+        with open(self.file_path, 'w') as f:
+            json.dump(data, f)
 
     def read_data(self):
-        f=open(f'{self.file_directory}','r')
-        data=json.load(f)
-        f.close()
-        return data
-    
-    def __getitem__(self,key):
-        f=open(f'{self.file_directory}','r')
-        data=json.load(f)
-        f.close()
-        return data.get(key)
+        with open(self.file_path, 'r') as f:
+            return json.load(f)
+        
+    def __getitem__(self, key):
+        return self.read_data()[key]
     
     def __setitem__(self, key: str, value) -> None:
-        with open(self.file_directory, "r") as f:
-            data = json.load(f)
-    
-        with open(self.file_directory, "w") as f:
-            data[key] = value
-            f.write(json.dumps(data))
+        data = self.read_data()
+        data[key] = value
+        self.save_data(data)
         
     def keys(self):
-        with open(self.file_directory, "r") as f:
-            data = json.load(f)
-            return data.keys()
+        data = self.read_data()
+        return data.keys()
 
 
 def get_time():
@@ -130,12 +113,11 @@ class QHSeparationLine(QFrame):
         if event.button() == Qt.LeftButton:
             if message_box():
                 self.deleteLater()
-                data = json_file.read_data()
+                data = self.workspace_file.read_data()
                 data[self.group_fname]["items"].remove(self.separator_name)
-                json_file.save_data(data)
+                self.workspace_file.save_data(data)
 
 
 
-json_file = JsonIt(sys.argv[1])
 if __name__ == "__main__":
     print(USER_FILE_DIRECTORY)

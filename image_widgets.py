@@ -9,6 +9,7 @@ class ImageWidget(QWidget):
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\image.ui",self)
         self.group_fname = group_fname
         self.image_fname = image_fname
+        self.workspace_json_file = parent_group.workspace_json_file
     
 
     def set_img(self, image_from_object):
@@ -17,6 +18,7 @@ class ImageWidget(QWidget):
     
 
     def load_img(self, path):
+        print(path)
         pixmap = QPixmap(path)
         self.image.setPixmap(pixmap)
     
@@ -41,6 +43,7 @@ class EditImage(QDialog):
     image_is_saved   = pyqtSignal(QImage)
     def __init__(self, parent, group_fname, image_fname):
         super().__init__(parent)
+        self.workspace_json_file = parent.workspace_json_file
         self.drawing_color = [255,255,255]
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\edit_image.ui",self)
         self.setWindowTitle("Image Editor")
@@ -48,8 +51,8 @@ class EditImage(QDialog):
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.group_fname = group_fname
         self.image_fname = image_fname
-        self.pixmap = QPixmap(USER_FILE_DIRECTORY + "\\" + self.group_fname + "\\" + self.image_fname)
-        self.src_frame = cv2.imread(USER_FILE_DIRECTORY + "\\" + self.group_fname + "\\" + self.image_fname)
+        self.pixmap = QPixmap(self.workspace_json_file.file_directory + "\\" + self.group_fname + "\\" + self.image_fname)
+        self.src_frame = cv2.imread(self.workspace_json_file.file_directory + "\\" + self.group_fname + "\\" + self.image_fname)
         self.edit_frame = self.src_frame.copy()
         self.image.setPixmap(self.pixmap)
         self.delete_button.clicked.connect(self.delete_image)
@@ -62,18 +65,18 @@ class EditImage(QDialog):
 
 
     def save_image_method(self):
-        cv2.imwrite(USER_FILE_DIRECTORY + "\\" + self.group_fname + "\\" + self.image_fname,self.edit_frame)
+        cv2.imwrite(self.workspace_json_file.file_directory + "\\" + self.group_fname + "\\" + self.image_fname,self.edit_frame)
         self.image_is_saved.emit(self.frame2qimg(self.edit_frame))
         self.close()
 
 
     def delete_image(self):
         if message_box():
-            data = json_file.read_data()
+            data = self.workspace_json_file.read_data()
             data[self.group_fname]["items"].remove(self.image_fname)
-            json_file.save_data(data)
+            self.workspace_json_file.save_data(data)
             self.image_is_deleted.emit()
-            os.remove(USER_FILE_DIRECTORY + "\\" + self.group_fname + "\\" + self.image_fname)
+            os.remove(self.workspace_json_file.file_directory + "\\" + self.group_fname + "\\" + self.image_fname)
             self.close()
 
 
@@ -120,12 +123,12 @@ class EditImage(QDialog):
 class CameraCapture(QDialog):
     image_is_deleted = pyqtSignal()
     image_is_saved_from_camera   = pyqtSignal(str)
-    def __init__(self, parent, group_fname):
-        super().__init__(parent)
+    def __init__(self, parent_group, group_fname):
+        super().__init__(parent_group)
+        self.workspace_json_file = parent_group.workspace_json_file
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\open_camera.ui",self)
         self.setWindowTitle("Image Editor")
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
-        self.setAttribute(Qt.WA_DeleteOnClose)
         self.group_fname = group_fname
         self.pause_stream_button.clicked.connect(self.pause_stream_method)
         self.save_image_button.clicked.connect(self.save_image_method)
@@ -135,8 +138,10 @@ class CameraCapture(QDialog):
         self.camera_thread.start()
     
     def set_image_from_qimg(self, qimg):
-        pixmap = QPixmap.fromImage(qimg)
-        self.image.setPixmap(pixmap)
+        if self.isVisible():
+            pixmap = QPixmap.fromImage(qimg)
+            self.image.setPixmap(pixmap)
+
     
     def img_is_flipped(self, state):
             self.camera_thread.is_flipped = state
@@ -144,10 +149,10 @@ class CameraCapture(QDialog):
     def save_image_method(self):
         image_fname = get_time() + ".png"
         self.camera_thread.requestInterruption()
-        self.camera_thread.save_img(USER_FILE_DIRECTORY + "\\" + self.group_fname + "\\" + image_fname)
-        data = json_file.read_data()
+        self.camera_thread.save_img(self.workspace_json_file.file_directory + "\\" + self.group_fname + "\\" + image_fname)
+        data = self.workspace_json_file.read_data()
         data[self.group_fname]["items"].append(image_fname)
-        json_file.save_data(data)
+        self.workspace_json_file.save_data(data)
         self.image_is_saved_from_camera.emit(image_fname)
         self.close()
     

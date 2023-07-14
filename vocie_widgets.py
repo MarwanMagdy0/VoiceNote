@@ -3,6 +3,7 @@ from utiles import *
 class VoiceNote(QWidget):
     def __init__(self, parent_group, group_fname, audio_fname):
         super().__init__(parent_group)
+        self.workspace_json_file = parent_group.workspace_json_file
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\voice_note.ui",self)
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.group_fname = group_fname
@@ -14,7 +15,7 @@ class VoiceNote(QWidget):
 
     def init_audio(self):
         self.media_player = QMediaPlayer()
-        audio_url = QUrl.fromLocalFile(USER_FILE_DIRECTORY + "\\" + self.group_fname + "\\" + self.audio_fname)
+        audio_url = QUrl.fromLocalFile(self.workspace_json_file.file_directory + "\\" + self.group_fname + "\\" + self.audio_fname)
         self.media_player.setMedia(QMediaContent(audio_url))
         self.timer = QTimer(self)
         self.timer.setInterval(100)
@@ -60,10 +61,10 @@ class VoiceNote(QWidget):
     def delete_widget(self):
         if message_box():
             self.deleteLater()
-            data = json_file.read_data()
+            data = self.workspace_json_file.read_data()
             data[self.group_fname]["items"].remove(self.audio_fname)
-            json_file.save_data(data)
-            os.remove(USER_FILE_DIRECTORY + "\\" + self.group_fname + "\\" + self.audio_fname)
+            self.workspace_json_file.save_data(data)
+            os.remove(self.workspace_json_file.file_directory + "\\" + self.group_fname + "\\" + self.audio_fname)
 
 
 class AudioRecorderThread(QThread):
@@ -103,11 +104,12 @@ class RecordAudio(QDialog):
     def __init__(self, parent_dialoge, group_fname):
         super().__init__(parent_dialoge)
         self.group_fname = group_fname
+        self.workspace_json_file = parent_dialoge.workspace_json_file
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\record_audio.ui",self)
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.audio_file_name = get_time() + ".wav"
-        self.recorder = AudioRecorderThread(USER_FILE_DIRECTORY + "\\" + group_fname+ "\\"+ self.audio_file_name)
+        self.recorder = AudioRecorderThread(self.workspace_json_file.file_directory + "\\" + group_fname+ "\\"+ self.audio_file_name)
         self.record_button.clicked.connect(self.toggle_record_state)
         self.save_button.clicked.connect(self.save_audio)
         self.delete_button.clicked.connect(self.delete_method)
@@ -131,9 +133,9 @@ class RecordAudio(QDialog):
         self.recorder.requestInterruption()
         self.recorder.save()
         self.audio_added.emit(self.audio_file_name)
-        data = json_file.read_data()
+        data = self.workspace_json_file.read_data()
         data[self.group_fname]["items"].append(self.audio_file_name)
-        json_file.save_data(data)
+        self.workspace_json_file.save_data(data)
         self.close()
     
     def delete_method(self):

@@ -1,23 +1,28 @@
-from PyQt5.QtWidgets import QMainWindow, QStackedWidget, QApplication, QWidget, QHBoxLayout, QPushButton, QListWidget, QGridLayout
-from PyQt5.QtCore import pyqtSignal
-from PyQt5 import QtGui, uic
-from utiles import *
+import json
+import os.path
 
+class HandleJsonFiles:
+    def __init__(self, file_path):
+        self.file_path = file_path
+        self.workspace_directory = os.path.dirname(self.file_path)
+        if not os.path.isfile(self.file_path):
+            self.save_data({})
 
-class UI(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\main_window.ui",self)
-        self.setWindowIcon(QIcon(SCRIPT_DIRECTORY + "\\" + 'ui\\data\\icon.png'))
-        self.setWindowTitle(os.path.basename(sys.argv[1]))
+    def save_data(self, data):
+        with open(self.file_path, 'w') as f:
+            json.dump(data, f)
+
+    def read_data(self):
+        with open(self.file_path, 'r') as f:
+            return json.load(f)
+        
+    def __getitem__(self, key):
+        self.read_data()[key]
     
-    def closeEvent(self, event):
-        print("ex")
-        event.accept()
-        self.close()
-
-
-app = QApplication([])
-myWindow = UI()
-myWindow.show()
-sys.exit(app.exec_())
+    def __setitem__(self, key: str, value) -> None:
+        data = self.read_data()
+        data[key] = value
+        self.save_data(data)
+        
+    def keys(self):
+        return self.data.keys()

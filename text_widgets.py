@@ -7,6 +7,7 @@ class AddText(QDialog):
     font_changed = pyqtSignal(str, str, bool)
     def __init__(self, parent):
         super().__init__(parent)
+        self.workspace_json_file = parent.workspace_json_file
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\add_text.ui", self)
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setAttribute(Qt.WA_DeleteOnClose)
@@ -27,11 +28,12 @@ class AddText(QDialog):
     def closeEvent(self, event):
         self.font_changed.emit("null", "null", False)
         event.accept()
-        
+
 
 class NormalText(QWidget):
-    def __init__(self, text, font_str, group_fname, ref2text):
+    def __init__(self, parent_group, text, font_str, group_fname, ref2text):
         super().__init__()
+        self.workspace_json_file = parent_group.workspace_json_file
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.ref2text = ref2text
         self.group_fname = group_fname
@@ -62,21 +64,22 @@ class NormalText(QWidget):
         font = QFont()
         font.fromString(font_str)
         self.label.setFont(font)
-        data = json_file.read_data()
+        data = self.workspace_json_file.read_data()
         data[self.group_fname]["refrences"][self.ref2text] = {"text":"", "font":"", "is-centered":False}
         data[self.group_fname]["refrences"][self.ref2text]["text"] = text
         data[self.group_fname]["refrences"][self.ref2text]["font"] = font_str
         data[self.group_fname]["refrences"][self.ref2text]["is-centered"] = is_centered
-        json_file.save_data(data)
+        self.workspace_json_file.save_data(data)
 
 class EditText(QDialog):
     new_text_saved = pyqtSignal(str, str, bool)
     text_is_deleted = pyqtSignal()
-    def __init__(self, parent, text, text_font, group_fname, ref2text):
-        super().__init__(parent)
+    def __init__(self, parent_group, text, text_font, group_fname, ref2text):
+        super().__init__(parent_group)
         self.text_font = text_font
         self.ref2text = ref2text
         self.group_fname = group_fname
+        self.workspace_json_file = parent_group.workspace_json_file
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\edit_text.ui", self)
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setAttribute(Qt.WA_DeleteOnClose)
@@ -97,10 +100,10 @@ class EditText(QDialog):
     
     def delete_text(self):
         if message_box():
-            data = json_file.read_data()
+            data = self.workspace_json_file.read_data()
             print(self.ref2text)
             data[self.group_fname]["refrences"].pop(self.ref2text)
             data[self.group_fname]["items"].remove(self.ref2text)
-            json_file.save_data(data)
+            self.workspace_json_file.save_data(data)
             self.text_is_deleted.emit()
             self.close()

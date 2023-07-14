@@ -102,17 +102,62 @@ border-radius: 10px;
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="add_new_group_button">
-        <property name="styleSheet">
-         <string notr="true">font: 63 12pt &quot;JetBrains Mono NL SemiBold&quot;;
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QPushButton" name="back_button">
+          <property name="maximumSize">
+           <size>
+            <width>80</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">font: 63 12pt &quot;JetBrains Mono NL SemiBold&quot;;
 border: 1px solid #7070d0;
 border-radius: 10px;
 </string>
-        </property>
-        <property name="text">
-         <string>new group</string>
-        </property>
-       </widget>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>data/left-arrow.png</normaloff>data/left-arrow.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>25</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="shortcut">
+           <string>Backspace</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="add_new_group_button">
+          <property name="maximumSize">
+           <size>
+            <width>80</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">font: 63 19pt &quot;JetBrains Mono NL SemiBold&quot;;
+border: 1px solid #7070d0;
+border-radius: 10px;
+</string>
+          </property>
+          <property name="text">
+           <string>+</string>
+          </property>
+          <property name="shortcut">
+           <string>Ctrl+N</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>

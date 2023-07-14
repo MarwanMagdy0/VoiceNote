@@ -10,10 +10,10 @@ class Group(QWidget):
         self.parent_tree =parent_tree
         self.root = root
         self.main_window = main_window
+        self.workspace_json_file = main_window.workspace_json_file
         self.group_fname = group_fname
-        self.group_title = json_file[self.group_fname]["group-title"]
+        self.group_title = self.workspace_json_file[self.group_fname]["group-title"]
         self.init_ui()
-        self.setAttribute(Qt.WA_DeleteOnClose)
 
 
     def init_ui(self):
@@ -51,17 +51,17 @@ class Group(QWidget):
             image = mime_data.imageData()
             img_widget = ImageWidget(self, self.group_fname, image_fname)
             img_widget.set_img(image)
-            image.save(USER_FILE_DIRECTORY + "\\" + self.group_fname+ "\\" + image_fname, "PNG")
+            image.save(self.workspace_json_file.file_directory + "\\" + self.group_fname+ "\\" + image_fname, "PNG")
             self.add_widget(img_widget)
-            data = json_file.read_data()
+            data = self.workspace_json_file.read_data()
             data[self.group_fname]["items"].append(image_fname)
-            json_file.save_data(data)
+            self.workspace_json_file.save_data(data)
     
 
     def add_image_from_camera_method(self, image_fname):
             QTreeWidgetItem(self.parent_tree, [image_fname])
             img_widget = ImageWidget(self, self.group_fname, image_fname)
-            img_widget.load_img(USER_FILE_DIRECTORY + "\\" + self.group_fname + "\\" + image_fname)
+            img_widget.load_img(self.workspace_json_file.file_directory + "\\" + self.group_fname + "\\" + image_fname)
             self.add_widget(img_widget)
 
 
@@ -72,33 +72,33 @@ class Group(QWidget):
         
         ref2text = get_time() + ".ref"
         QTreeWidgetItem(self.parent_tree, [text])
-        normal_text = NormalText(text, font, self.group_fname, ref2text)
+        normal_text = NormalText(self, text, font, self.group_fname, ref2text)
         if is_centered:
             normal_text.label.setAlignment(Qt.AlignCenter)
         self.add_widget(normal_text)
-        data = json_file.read_data()
+        data = self.workspace_json_file.read_data()
         data[self.group_fname]["items"].append(ref2text)
         data[self.group_fname]["refrences"][ref2text] = {"text":text, "font":font, "is-centered":is_centered}
-        json_file.save_data(data)
+        self.workspace_json_file.save_data(data)
 
     
     def add_separator(self):
         separator_name = get_time() + ".separator"
         self.add_widget(QHSeparationLine(self.group_fname, separator_name))
-        data = json_file.read_data()
+        data = self.workspace_json_file.read_data()
         data[self.group_fname]["items"].append(separator_name)
-        json_file.save_data(data)
+        self.workspace_json_file.save_data(data)
     
 
     def load_data(self):
         self.title_label.title_label.setText(self.group_title)
-        for item in json_file[self.group_fname]["items"]:
+        for item in self.workspace_json_file[self.group_fname]["items"]:
             if item.endswith(".ref"):
-                text = json_file[self.group_fname]["refrences"][item]["text"]
-                font = json_file[self.group_fname]["refrences"][item]["font"]
-                is_centered = json_file[self.group_fname]["refrences"][item]["is-centered"]
+                text = self.workspace_json_file[self.group_fname]["refrences"][item]["text"]
+                font = self.workspace_json_file[self.group_fname]["refrences"][item]["font"]
+                is_centered = self.workspace_json_file[self.group_fname]["refrences"][item]["is-centered"]
                 QTreeWidgetItem(self.parent_tree, [text])
-                normal_text = NormalText(text, font, self.group_fname, item)
+                normal_text = NormalText(self, text, font, self.group_fname, item)
                 if is_centered:
                     normal_text.label.setAlignment(Qt.AlignCenter)
                 self.add_widget(normal_text)
@@ -111,7 +111,7 @@ class Group(QWidget):
             elif (item.endswith(".png") or item.endswith(".jpg")):
                 QTreeWidgetItem(self.parent_tree, [item])
                 img_widget = ImageWidget(self, self.group_fname, item)
-                img_widget.load_img(USER_FILE_DIRECTORY + "\\" + self.group_fname  + "\\" +item)
+                img_widget.load_img(self.workspace_json_file.file_directory + "\\" + self.group_fname  + "\\" +item)
                 self.add_widget(img_widget)
             
             elif item.endswith(".separator"):
@@ -127,17 +127,17 @@ class Group(QWidget):
     def editing_title_finished(self, new_group_title):
         self.root.setText(0, new_group_title)
         self.group_title = new_group_title
-        data = json_file.read_data()
+        data = self.workspace_json_file.read_data()
         data[self.group_fname]["group-title"] = new_group_title
-        json_file.save_data(data)
+        self.workspace_json_file.save_data(data)
         self.title_label.title_label.setText(new_group_title)
     
     def delete_group_method(self):
         if message_box():
-            shutil.rmtree(USER_FILE_DIRECTORY + "\\" + self.group_fname)
-            data = json_file.read_data()
+            shutil.rmtree(self.workspace_json_file.file_directory + "\\" + self.group_fname)
+            data = self.workspace_json_file.read_data()
             data.pop(self.group_fname)
-            json_file.save_data(data)
+            self.workspace_json_file.save_data(data)
             self.deleteLater()
             self.group_is_deleted.emit(self.group_fname)
 
@@ -147,12 +147,13 @@ class AddDialoge(QDialog):
     font_changed = pyqtSignal(str, str, bool)
     separator_is_added = pyqtSignal()
     image_is_saved_from_camera = pyqtSignal(str)
+
     def __init__(self, parent_group, group_fname):
         super().__init__(parent_group)
         self.group_fname = group_fname
+        self.workspace_json_file = parent_group.workspace_json_file
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\add_items_to_group.ui",self)
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
-        self.setAttribute(Qt.WA_DeleteOnClose)
         self.img_from_clib.setLayoutDirection(Qt.RightToLeft)
         self.img_from_camera.setLayoutDirection(Qt.RightToLeft)
         self.record_audio_button.setLayoutDirection(Qt.RightToLeft)
@@ -204,7 +205,6 @@ class EditableLabel(QWidget):
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\label_edit.ui",self)
         self.line_edit.editingFinished.connect(self.finish_editing)
         self.line_edit.hide()
-        self.setAttribute(Qt.WA_DeleteOnClose)
         
     def mouseDoubleClickEvent(self, event):
         if self.line_edit.isHidden():
