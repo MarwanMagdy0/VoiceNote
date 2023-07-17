@@ -29,6 +29,10 @@ class HandleJsonFiles:
         self.file_directory = os.path.dirname(self.file_path) + "\\" + os.path.basename(self.file_path).split(".")[0]
         if not os.path.isfile(self.file_path):
             self.save_data({})
+        with open(sys.argv[1], "r") as f:
+            if f.read() == "":
+                with open(self.file_path, 'w') as write_to_file:
+                    write_to_file.write("{}")
 
     def save_data(self, data):
         with open(self.file_path, 'w') as f:
@@ -80,12 +84,6 @@ collector.start()
 
 init_group = {"group-title":"Title", "items":[], "refrences":{}}
 
-# Checking if the .vnote file is not empty and if it was , dump the initial directory data to it
-with open(sys.argv[1], "r") as f:
-    if f.read() == "":
-        group_fname = get_time()
-        if not os.path.isdir(USER_FILE_DIRECTORY):
-            os.mkdir(USER_FILE_DIRECTORY)
 
 
 def message_box() -> bool:

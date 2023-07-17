@@ -6,22 +6,37 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>757</width>
     <height>591</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">* {
+	background-color: #1e1e1e;
+	color: #ffffff;
+}
+</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="page"/>
-      <widget class="QWidget" name="page_2"/>
+      <widget class="QWidget" name="page_2">
+       <layout class="QHBoxLayout" name="horizontalLayout_2"/>
+      </widget>
      </widget>
     </item>
    </layout>

@@ -18,7 +18,6 @@ class ImageWidget(QWidget):
     
 
     def load_img(self, path):
-        print(path)
         pixmap = QPixmap(path)
         self.image.setPixmap(pixmap)
     
