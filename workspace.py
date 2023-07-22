@@ -50,6 +50,9 @@ class WorkSpace(QWidget):
             card = Card(card_data)
             card.card_selected.connect(lambda card_directory: self.card_selected.emit(card_directory))
             self.add_widget(card)
+        self.layout = self.scrollArea.widget().layout()
+        self.scrollArea.widget().setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.scroll_area_bar = self.scrollArea.verticalScrollBar()
 
 
     def add_new_card_method(self):

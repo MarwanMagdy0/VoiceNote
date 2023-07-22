@@ -19,7 +19,6 @@ class FileView(QWidget):
         back_directory = self.workspace_json_file.read_data()["back"]
         j = HandleJsonFiles(back_directory)
         file_type = j.read_data()["type"]
-        print({"directory":back_directory, "type":file_type})
         self.back_button.clicked.connect(lambda data: self.go_back.emit({"directory":back_directory, "type":file_type}))
         self.treeWidget.itemClicked.connect(self.handle_item_clicked)
         self.add_new_group_button.clicked.connect(self.create_new_group)
