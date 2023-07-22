@@ -17,8 +17,7 @@
    <string notr="true">* {
 	background-color: #1e1e1e;
 	color: #ffffff;
-}
-</string>
+}</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">

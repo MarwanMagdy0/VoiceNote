@@ -70,6 +70,9 @@ QScrollBar {
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
+    <layout class="QVBoxLayout" name="label_layout"/>
+   </item>
+   <item>
     <widget class="QScrollArea" name="scrollArea">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -90,7 +93,7 @@ padding:1px</string>
         <x>0</x>
         <y>0</y>
         <width>1151</width>
-        <height>518</height>
+        <height>510</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -149,7 +152,7 @@ padding:1px</string>
        </property>
       </spacer>
      </item>
-     <item>
+     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
       <widget class="QPushButton" name="add_new_card_button">
        <property name="minimumSize">
         <size>

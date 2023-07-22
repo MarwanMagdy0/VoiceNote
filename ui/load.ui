@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>911</width>
+    <width>914</width>
     <height>642</height>
    </rect>
   </property>
@@ -68,133 +68,150 @@ QScrollBar:vertical {
         background: none;
     }</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_3">
+  <layout class="QVBoxLayout" name="verticalLayout_4">
+   <item>
+    <layout class="QVBoxLayout" name="title_layout"/>
+   </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <widget class="QTreeWidget" name="treeWidget">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>200</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">font: 63 12pt &quot;JetBrains Mono SemiBold&quot;;
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="QFrame" name="frame">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTreeWidget" name="treeWidget">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>200</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">font: 63 12pt &quot;JetBrains Mono SemiBold&quot;;
 background-color: rgb(48, 48, 48);
 border: 3px solid #303030;
 border-radius: 10px;
 
 </string>
-         </property>
-         <column>
-          <property name="text">
-           <string>Group Titles</string>
-          </property>
-         </column>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <item>
-          <widget class="QPushButton" name="back_button">
-           <property name="maximumSize">
-            <size>
-             <width>80</width>
-             <height>25</height>
-            </size>
            </property>
-           <property name="styleSheet">
-            <string notr="true">font: 63 12pt &quot;JetBrains Mono NL SemiBold&quot;;
-border: 1px solid #7070d0;
-border-radius: 10px;
-</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset>
-             <normaloff>data/left-arrow.png</normaloff>data/left-arrow.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>25</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="shortcut">
-            <string>Backspace</string>
-           </property>
+           <column>
+            <property name="text">
+             <string>Group Titles</string>
+            </property>
+           </column>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="add_new_group_button">
-           <property name="maximumSize">
-            <size>
-             <width>80</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">font: 63 19pt &quot;JetBrains Mono NL SemiBold&quot;;
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="QPushButton" name="back_button">
+             <property name="maximumSize">
+              <size>
+               <width>80</width>
+               <height>25</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">font: 63 12pt &quot;JetBrains Mono NL SemiBold&quot;;
 border: 1px solid #7070d0;
 border-radius: 10px;
 </string>
-           </property>
-           <property name="text">
-            <string>+</string>
-           </property>
-           <property name="shortcut">
-            <string>Ctrl+N</string>
-           </property>
-          </widget>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>data/left-arrow.png</normaloff>data/left-arrow.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>25</width>
+               <height>25</height>
+              </size>
+             </property>
+             <property name="shortcut">
+              <string>Backspace</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="add_new_group_button">
+             <property name="maximumSize">
+              <size>
+               <width>80</width>
+               <height>25</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">font: 63 19pt &quot;JetBrains Mono NL SemiBold&quot;;
+border: 1px solid #7070d0;
+border-radius: 10px;
+</string>
+             </property>
+             <property name="text">
+              <string>+</string>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+N</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>
-      </layout>
-     </item>
-     <item>
-      <widget class="QScrollArea" name="scrollArea">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">border:none;
+       <item>
+        <widget class="QScrollArea" name="scrollArea">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">border:none;
 padding:1px</string>
-       </property>
-       <property name="verticalScrollBarPolicy">
-        <enum>Qt::ScrollBarAsNeeded</enum>
-       </property>
-       <property name="widgetResizable">
-        <bool>true</bool>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-       </property>
-       <widget class="QWidget" name="scrollAreaWidgetContents">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>681</width>
-          <height>620</height>
-         </rect>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout"/>
-       </widget>
-      </widget>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAsNeeded</enum>
+         </property>
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContents">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>682</width>
+            <height>610</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout"/>
+         </widget>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>

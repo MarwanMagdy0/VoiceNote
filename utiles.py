@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QLineEdit, QVBoxLayout, QLabel, QDialog, QApplication, QTreeWidgetItem, QFontDialog, QMessageBox, QFrame, QSizePolicy, QColorDialog
+from PyQt5.QtWidgets import QWidget, QLineEdit, QVBoxLayout, QLabel, QDialog, QApplication, QTreeWidgetItem, QFontDialog, QMessageBox, QFrame, QSizePolicy, QColorDialog, QGridLayout, QStackedWidget, QPushButton, QVBoxLayout
 from PyQt5.QtGui import QPixmap, QImage, QIcon, QFont
 from PyQt5.QtCore import Qt, QTimer, QUrl
 from PyQt5.QtCore import QThread, pyqtSignal
@@ -17,11 +17,11 @@ import cv2
 import numpy as np
 import gc
 import threading
+from typing import Type
 if len(sys.argv)==1:
     sys.argv.append("C:\\Users\\hp\\Documents\\My_Data\\Python Projects\\Qt\\VoiceNote\\test_folder.vnote")
 
 SCRIPT_DIRECTORY    = os.path.dirname(os.path.realpath(__file__))
-USER_FILE_DIRECTORY = sys.argv[1][:-6] # C:\Users\hp\Desktop\new
 
 class HandleJsonFiles:
     def __init__(self, file_path):
@@ -29,10 +29,6 @@ class HandleJsonFiles:
         self.file_directory = os.path.dirname(self.file_path) + "\\" + os.path.basename(self.file_path).split(".")[0]
         if not os.path.isfile(self.file_path):
             self.save_data({})
-        with open(sys.argv[1], "r") as f:
-            if f.read() == "":
-                with open(self.file_path, 'w') as write_to_file:
-                    write_to_file.write("{}")
 
     def save_data(self, data):
         with open(self.file_path, 'w') as f:
@@ -43,7 +39,8 @@ class HandleJsonFiles:
             return json.load(f)
         
     def __getitem__(self, key):
-        return self.read_data()[key]
+        data = self.read_data()
+        return data[key]
     
     def __setitem__(self, key: str, value) -> None:
         data = self.read_data()
@@ -56,7 +53,7 @@ class HandleJsonFiles:
 
 
 def get_time():
-    return str(int(time.time() + 0.5 )) 
+    return str(int(time.time()*100)) 
 
 class GarbageCollector:
     def __init__(self):
@@ -79,8 +76,6 @@ class GarbageCollector:
         self.interrupt_event.set()
         self.thread.join()
 
-collector = GarbageCollector()
-collector.start()
 
 init_group = {"group-title":"Title", "items":[], "refrences":{}}
 
@@ -114,8 +109,3 @@ class QHSeparationLine(QFrame):
                 data = self.workspace_file.read_data()
                 data[self.group_fname]["items"].remove(self.separator_name)
                 self.workspace_file.save_data(data)
-
-
-
-if __name__ == "__main__":
-    print(USER_FILE_DIRECTORY)

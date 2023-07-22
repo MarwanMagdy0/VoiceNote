@@ -22,7 +22,7 @@ background-color: rgb(48, 48, 48);
    <item>
     <widget class="QLabel" name="title_label">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -46,6 +46,15 @@ background-color: rgb(48, 48, 48);
    </item>
    <item>
     <widget class="QLineEdit" name="line_edit">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border:none;</string>
+     </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
      </property>

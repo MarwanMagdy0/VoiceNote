@@ -200,11 +200,14 @@ class AddDialoge(QDialog):
 
 class EditableLabel(QWidget):
     title_updated = pyqtSignal(str)
-    def __init__(self, group_object, title):
+    def __init__(self, group_object, title, style_sheet = None):
         super().__init__(group_object)
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\label_edit.ui",self)
+        self.title_label.setText(title)
         self.line_edit.editingFinished.connect(self.finish_editing)
         self.line_edit.hide()
+        if style_sheet is not None:
+            self.setStyleSheet(style_sheet)
         
     def mouseDoubleClickEvent(self, event):
         if self.line_edit.isHidden():

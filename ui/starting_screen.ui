@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>Dialoge</class>
+ <widget class="QDialog" name="Dialoge">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -24,6 +24,10 @@
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>data/icon.png</normaloff>data/icon.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">* {
@@ -83,7 +87,7 @@ QPushButton:pressed {
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="worksapce_button">
      <property name="minimumSize">
       <size>
        <width>300</width>
@@ -102,7 +106,7 @@ QPushButton:pressed {
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="pushButton_2">
+    <widget class="QPushButton" name="fileview_button">
      <property name="minimumSize">
       <size>
        <width>300</width>
