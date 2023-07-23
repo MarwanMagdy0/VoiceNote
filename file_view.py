@@ -17,9 +17,12 @@ class FileView(QWidget):
         self.title_label.title_updated.connect(self.editing_title_finished)
         self.title_layout.addWidget(self.title_label)
         back_directory = self.workspace_json_file.read_data()["back"]
-        j = HandleJsonFiles(back_directory)
-        file_type = j.read_data()["type"]
-        self.back_button.clicked.connect(lambda data: self.go_back.emit({"directory":back_directory, "type":file_type}))
+        if back_directory is not None:
+            j = HandleJsonFiles(back_directory)
+            file_type = j.read_data()["type"]
+            self.back_button.clicked.connect(lambda data: self.go_back.emit({"directory":back_directory, "type":file_type}))
+        else:
+            self.back_button.setEnabled(False)
         self.treeWidget.itemClicked.connect(self.handle_item_clicked)
         self.add_new_group_button.clicked.connect(self.create_new_group)
         self.setWindowIcon(QIcon(SCRIPT_DIRECTORY + "\\" + 'ui\\data\\icon.png'))

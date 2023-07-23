@@ -45,7 +45,8 @@ class WorkSpace(QWidget):
             file_type = j.read_data()["type"]
             prev_card_data = {"directory":back_directory, "type":file_type}
             self.go_back_button.clicked.connect(lambda data: self.go_back_from_workspace.emit(prev_card_data))
-
+        else:
+            self.go_back_button.setEnabled(False)
         for card_data in self.workspace_json_file["cards"]:
             card = Card(card_data)
             card.card_selected.connect(lambda card_directory: self.card_selected.emit(card_directory))
@@ -70,9 +71,9 @@ class WorkSpace(QWidget):
         os.mkdir(card_directory + "\\" + card_fname)
         j = HandleJsonFiles(card_directory + "\\" + card_fname + ".vnote")
         if file_type == "workspace":
-            j.save_data({"type":"workspace", "cards":[], "back":self.workspace_file, "card-title":"Title"})
+            j.save_data({"type":"workspace", "cards":[], "back":self.workspace_file, "card-title":"workspace"})
         else:
-            j.save_data({"type":"file-view", "card-title":"Title", "back":self.workspace_file})
+            j.save_data({"type":"file-view", "back":self.workspace_file, "card-title":"file view"})
 
         card = Card(card_data)
         card.card_selected.connect(lambda card_directory: self.card_selected.emit(card_directory))

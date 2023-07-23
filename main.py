@@ -42,6 +42,13 @@ class MainWindow(QMainWindow):
 
     def load_from_vnote(self, path):
         self.workspace_json_file = HandleJsonFiles(path)
+        if self.workspace_json_file.read_data().get("type") == None:
+            data = self.workspace_json_file.read_data()
+            data["type"] = "file-view"
+            data["card-title"] = "file view"
+            data["back"] = None
+            self.workspace_json_file.save_data(data)
+
         if self.workspace_json_file["type"] == "workspace":
             w = WorkSpace(path)
             w.card_selected.connect(self.card_selected)
