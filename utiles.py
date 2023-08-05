@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QLineEdit, QVBoxLayout, QLabel, QDialog, QApplication, QTreeWidgetItem, QFontDialog, QMessageBox, QFrame, QSizePolicy, QColorDialog, QGridLayout, QStackedWidget, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QLineEdit, QVBoxLayout, QLabel, QDialog, QApplication, QTreeWidgetItem, QFontDialog, QMessageBox, QFrame, QSizePolicy, QColorDialog, QGridLayout, QStackedWidget, QPushButton, QVBoxLayout, QFileDialog, QScrollArea
 from PyQt5.QtGui import QPixmap, QImage, QIcon, QFont
 from PyQt5.QtCore import Qt, QTimer, QUrl
 from PyQt5.QtCore import QThread, pyqtSignal
@@ -18,17 +18,19 @@ import numpy as np
 import gc
 import threading
 from typing import Type
-if len(sys.argv)==1:
-    sys.argv.append("C:\\Users\\hp\\Documents\\My_Data\\Python Projects\\Qt\\VoiceNote\\test_folder.vnote")
 
-SCRIPT_DIRECTORY    = os.path.dirname(os.path.realpath(__file__))
+SCRIPT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 
 class HandleJsonFiles:
-    def __init__(self, file_path):
+    def __init__(self, file_path, default = None):
         self.file_path = file_path
         self.file_directory = os.path.dirname(self.file_path) + "\\" + os.path.basename(self.file_path).split(".")[0]
         if not os.path.isfile(self.file_path):
-            self.save_data({})
+            if default is not None:
+                self.save_data(default)
+            else:
+                self.save_data({})
+
 
     def save_data(self, data):
         with open(self.file_path, 'w') as f:
@@ -51,6 +53,10 @@ class HandleJsonFiles:
         data = self.read_data()
         return data.keys()
 
+def push_list(list_, item):
+    if len(list_) > 1:
+        list_.pop(-1)
+    list_.append(item)
 
 def get_time():
     return str(int(time.time()*100)) 
@@ -109,3 +115,6 @@ class QHSeparationLine(QFrame):
                 data = self.workspace_file.read_data()
                 data[self.group_fname]["items"].remove(self.separator_name)
                 self.workspace_file.save_data(data)
+
+
+refrences_file = HandleJsonFiles(SCRIPT_DIRECTORY + "\\ref.json", {"ref":[]})

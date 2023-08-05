@@ -2,28 +2,30 @@ from starting_screen import *
 from group import EditableLabel
 
 class Card(QWidget):
-    card_selected = pyqtSignal(dict)
-    def __init__(self, card_data : dict):
+    card_selected = pyqtSignal(dict, str)
+    def __init__(self, card_data : dict, workspace_file_directory):
         super().__init__()
         uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\group_card.ui",self)
-        j = HandleJsonFiles(card_data["directory"])
+        j = HandleJsonFiles(workspace_file_directory + "\\" + card_data["card-fname"])
         self.label.setText(j["card-title"])
         self.card_data = card_data
+        self.workspace_file_directory = workspace_file_directory
     
 
     def mouseDoubleClickEvent(self, event):
         if event.button() == Qt.LeftButton:
-            self.card_selected.emit(self.card_data)
+            self.card_selected.emit(self.card_data, self.workspace_file_directory)
 
 
 
 class WorkSpace(QWidget):
     add_new_card_button: QPushButton
     gridLayout: QGridLayout
-    card_selected = pyqtSignal(dict)
+    card_selected = pyqtSignal(dict, str)
     label_layout: QVBoxLayout
     go_back_button:QPushButton
-    go_back_from_workspace = pyqtSignal(dict)
+    go_back_from_workspace = pyqtSignal(dict, str)
+    go_back_to_welcome_screen = pyqtSignal()
     def __init__(self, workspace_file):
         super().__init__()
         self.workspace_file = workspace_file
@@ -41,15 +43,22 @@ class WorkSpace(QWidget):
         self.title_label.title_updated.connect(self.editing_title_finished)
         back_directory = self.workspace_json_file.read_data()["back"]
         if back_directory is not None:
-            j = HandleJsonFiles(back_directory)
+            j = HandleJsonFiles(self.workspace_file[:-6] + back_directory)
             file_type = j.read_data()["type"]
-            prev_card_data = {"directory":back_directory, "type":file_type}
-            self.go_back_button.clicked.connect(lambda data: self.go_back_from_workspace.emit(prev_card_data))
+            prev_card_data = {"card-fname":back_directory, "type":file_type}
+            self.go_back_button.clicked.connect(lambda : self.go_back_from_workspace.emit(prev_card_data, self.workspace_file[:-6]))
         else:
-            self.go_back_button.setEnabled(False)
+            self.go_back_button.clicked.connect(self.go_back_to_welcome_screen.emit)
+            data = refrences_file.read_data()
+            if os.path.abspath(self.workspace_file) in data["ref"]:
+                data["ref"].remove(os.path.abspath(self.workspace_file))
+            data["ref"].insert(0, os.path.abspath(self.workspace_file))
+            refrences_file.save_data(data)
+
+
         for card_data in self.workspace_json_file["cards"]:
-            card = Card(card_data)
-            card.card_selected.connect(lambda card_directory: self.card_selected.emit(card_directory))
+            card = Card(card_data, self.workspace_file[:-6])
+            card.card_selected.connect(lambda card_directory, workspace_directroy: self.card_selected.emit(card_directory, workspace_directroy))
             self.add_widget(card)
         self.layout = self.scrollArea.widget().layout()
         self.scrollArea.widget().setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
@@ -64,19 +73,19 @@ class WorkSpace(QWidget):
     
 
     def create_card_directory(self, file_type):
-        card_directory = self.workspace_file[:-6] + "\\" + get_time()
         card_fname     = get_time()
-        card_data = {"directory" :  card_directory + "\\" + card_fname + ".vnote", "type":file_type}
+        card_directory = self.workspace_file[:-6] + "\\" + card_fname
+        card_data = {"card-fname" : card_fname + "\\" + card_fname + ".vnote", "type":file_type}
         os.mkdir(card_directory)
         os.mkdir(card_directory + "\\" + card_fname)
         j = HandleJsonFiles(card_directory + "\\" + card_fname + ".vnote")
         if file_type == "workspace":
-            j.save_data({"type":"workspace", "cards":[], "back":self.workspace_file, "card-title":"workspace"})
+            j.save_data({"type":"workspace", "cards":[], "back":"\\..\\..\\..\\" + os.path.basename(self.workspace_file), "card-title":"workspace"})
         else:
-            j.save_data({"type":"file-view", "back":self.workspace_file, "card-title":"file view"})
+            j.save_data({"type":"file-view", "back": "\\..\\..\\..\\" + os.path.basename(self.workspace_file), "card-title":"file view"})
 
-        card = Card(card_data)
-        card.card_selected.connect(lambda card_directory: self.card_selected.emit(card_directory))
+        card = Card(card_data, self.workspace_file[:-6])
+        card.card_selected.connect(lambda card_directory, workspace_directroy: self.card_selected.emit(card_directory, workspace_directroy))
         self.add_widget(card)
         data = self.workspace_json_file.read_data()
         data["cards"].append(card_data)
