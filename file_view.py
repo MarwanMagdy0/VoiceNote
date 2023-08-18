@@ -1,7 +1,8 @@
 from group import *
 
 class FileView(QWidget):
-    go_back = pyqtSignal(dict)
+    go_back = pyqtSignal(dict, str)
+    go_back_to_welcome_screen = pyqtSignal()
     back_button : QPushButton
     title_layout : QVBoxLayout
     def __init__(self, workspace_file):
@@ -12,20 +13,28 @@ class FileView(QWidget):
         
 
     def init_ui(self):
-        uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\load.ui",self)
+        uic.loadUi(SCRIPT_DIRECTORY + "/" + "ui/load.ui",self)
         self.title_label = EditableLabel(self, self.workspace_json_file.read_data()["card-title"], 'background:#1e1e1e;font: 63 16pt "JetBrains Mono NL SemiBold";')
         self.title_label.title_updated.connect(self.editing_title_finished)
         self.title_layout.addWidget(self.title_label)
         back_directory = self.workspace_json_file.read_data()["back"]
+
         if back_directory is not None:
-            j = HandleJsonFiles(back_directory)
+            j = HandleJsonFiles(self.workspace_json_file.file_directory[:-6] + back_directory)
+            print(self.workspace_json_file.file_directory[:-6] + back_directory)
             file_type = j.read_data()["type"]
-            self.back_button.clicked.connect(lambda data: self.go_back.emit({"directory":back_directory, "type":file_type}))
+            self.back_button.clicked.connect(lambda data: self.go_back.emit({"card-fname":back_directory, "type":file_type}, self.workspace_json_file.file_directory[:-6]))
         else:
-            self.back_button.setEnabled(False)
+            self.back_button.clicked.connect(self.go_back_to_welcome_screen.emit)
+            data = refrences_file.read_data()
+            if os.path.abspath(self.workspace_json_file.file_path) in data["ref"]:
+                data["ref"].remove(os.path.abspath(self.workspace_json_file.file_path))
+            data["ref"].insert(0, os.path.abspath(self.workspace_json_file.file_path))
+            refrences_file.save_data(data)
+
         self.treeWidget.itemClicked.connect(self.handle_item_clicked)
         self.add_new_group_button.clicked.connect(self.create_new_group)
-        self.setWindowIcon(QIcon(SCRIPT_DIRECTORY + "\\" + 'ui\\data\\icon.png'))
+        self.setWindowIcon(QIcon(SCRIPT_DIRECTORY + "/" + 'ui/data/icon.png'))
         self.layout = self.scrollArea.widget().layout()
         self.scrollArea.widget().setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.scroll_area_bar = self.scrollArea.verticalScrollBar()
@@ -47,7 +56,7 @@ class FileView(QWidget):
 
     def create_new_group(self):
         group_fname = get_time()
-        group_directory = self.workspace_json_file.file_directory + "\\" + group_fname
+        group_directory = os.path.abspath(self.workspace_json_file.file_directory + "/" + group_fname)
         root = QTreeWidgetItem(self.treeWidget.invisibleRootItem(), [f"Title"])
         self.workspace_json_file[group_fname] = init_group
         os.mkdir(group_directory)

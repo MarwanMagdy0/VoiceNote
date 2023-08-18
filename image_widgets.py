@@ -6,7 +6,7 @@ from utiles import *
 class ImageWidget(QWidget):
     def __init__(self, parent_group, group_fname, image_fname):
         super().__init__(parent_group)
-        uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\image.ui",self)
+        uic.loadUi(SCRIPT_DIRECTORY + "/" + "ui/Image.ui",self)
         self.group_fname = group_fname
         self.image_fname = image_fname
         self.workspace_json_file = parent_group.workspace_json_file
@@ -44,14 +44,14 @@ class EditImage(QDialog):
         super().__init__(parent)
         self.workspace_json_file = parent.workspace_json_file
         self.drawing_color = [255,255,255]
-        uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\edit_image.ui",self)
+        uic.loadUi(SCRIPT_DIRECTORY + "/" + "ui/edit_image.ui",self)
         self.setWindowTitle("Image Editor")
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.group_fname = group_fname
         self.image_fname = image_fname
-        self.pixmap = QPixmap(self.workspace_json_file.file_directory + "\\" + self.group_fname + "\\" + self.image_fname)
-        self.src_frame = cv2.imread(self.workspace_json_file.file_directory + "\\" + self.group_fname + "\\" + self.image_fname)
+        self.pixmap = QPixmap(self.workspace_json_file.file_directory + "/" + self.group_fname + "/" + self.image_fname)
+        self.src_frame = cv2.imread(self.workspace_json_file.file_directory + "/" + self.group_fname + "/" + self.image_fname)
         self.edit_frame = self.src_frame.copy()
         self.image.setPixmap(self.pixmap)
         self.delete_button.clicked.connect(self.delete_image)
@@ -64,7 +64,7 @@ class EditImage(QDialog):
 
 
     def save_image_method(self):
-        cv2.imwrite(self.workspace_json_file.file_directory + "\\" + self.group_fname + "\\" + self.image_fname,self.edit_frame)
+        cv2.imwrite(self.workspace_json_file.file_directory + "/" + self.group_fname + "/" + self.image_fname,self.edit_frame)
         self.image_is_saved.emit(self.frame2qimg(self.edit_frame))
         self.close()
 
@@ -75,7 +75,7 @@ class EditImage(QDialog):
             data[self.group_fname]["items"].remove(self.image_fname)
             self.workspace_json_file.save_data(data)
             self.image_is_deleted.emit()
-            os.remove(self.workspace_json_file.file_directory + "\\" + self.group_fname + "\\" + self.image_fname)
+            os.remove(self.workspace_json_file.file_directory + "/" + self.group_fname + "/" + self.image_fname)
             self.close()
 
 
@@ -125,7 +125,7 @@ class CameraCapture(QDialog):
     def __init__(self, parent_group, group_fname):
         super().__init__(parent_group)
         self.workspace_json_file = parent_group.workspace_json_file
-        uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\open_camera.ui",self)
+        uic.loadUi(SCRIPT_DIRECTORY + "/" + "ui/open_camera.ui",self)
         self.setWindowTitle("Image Editor")
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.group_fname = group_fname
@@ -148,7 +148,7 @@ class CameraCapture(QDialog):
     def save_image_method(self):
         image_fname = get_time() + ".png"
         self.camera_thread.requestInterruption()
-        self.camera_thread.save_img(self.workspace_json_file.file_directory + "\\" + self.group_fname + "\\" + image_fname)
+        self.camera_thread.save_img(self.workspace_json_file.file_directory + "/" + self.group_fname + "/" + image_fname)
         data = self.workspace_json_file.read_data()
         data[self.group_fname]["items"].append(image_fname)
         self.workspace_json_file.save_data(data)

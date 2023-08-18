@@ -6,7 +6,7 @@ class StartingScreen(QDialog):
     file_type_choosed = pyqtSignal(str)
     def __init__(self):
         super().__init__()
-        uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\starting_screen.ui",self)
+        uic.loadUi(SCRIPT_DIRECTORY + "/" + "ui/starting_screen.ui",self)
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setWindowTitle("choose")
         self.worksapce_button.clicked.connect(lambda: self.create("workspace"))

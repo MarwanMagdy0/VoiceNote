@@ -114,6 +114,9 @@ border-radius: 10px;
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <property name="spacing">
+          <number>30</number>
+         </property>
          <item>
           <widget class="QPushButton" name="back_button">
            <property name="maximumSize">

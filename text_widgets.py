@@ -8,7 +8,7 @@ class AddText(QDialog):
     def __init__(self, parent):
         super().__init__(parent)
         self.workspace_json_file = parent.workspace_json_file
-        uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\add_text.ui", self)
+        uic.loadUi(SCRIPT_DIRECTORY + "/" + "ui/add_text.ui", self)
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.font_button.clicked.connect(self.choose_font)
@@ -80,7 +80,7 @@ class EditText(QDialog):
         self.ref2text = ref2text
         self.group_fname = group_fname
         self.workspace_json_file = parent_group.workspace_json_file
-        uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\edit_text.ui", self)
+        uic.loadUi(SCRIPT_DIRECTORY + "/" + "ui/edit_text.ui", self)
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.text_editor.setText(text)

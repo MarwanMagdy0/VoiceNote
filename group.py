@@ -17,7 +17,7 @@ class Group(QWidget):
 
 
     def init_ui(self):
-        uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\group.ui",self)
+        uic.loadUi(SCRIPT_DIRECTORY + "/" + "ui/group.ui",self)
         self.title_label = EditableLabel(self, self.group_title)
         self.label_layout.addWidget(self.title_label)
         self.title_label.title_updated.connect(self.editing_title_finished)
@@ -51,7 +51,7 @@ class Group(QWidget):
             image = mime_data.imageData()
             img_widget = ImageWidget(self, self.group_fname, image_fname)
             img_widget.set_img(image)
-            image.save(self.workspace_json_file.file_directory + "\\" + self.group_fname+ "\\" + image_fname, "PNG")
+            image.save(self.workspace_json_file.file_directory + "/" + self.group_fname+ "/" + image_fname, "PNG")
             self.add_widget(img_widget)
             data = self.workspace_json_file.read_data()
             data[self.group_fname]["items"].append(image_fname)
@@ -61,7 +61,7 @@ class Group(QWidget):
     def add_image_from_camera_method(self, image_fname):
             QTreeWidgetItem(self.parent_tree, [image_fname])
             img_widget = ImageWidget(self, self.group_fname, image_fname)
-            img_widget.load_img(self.workspace_json_file.file_directory + "\\" + self.group_fname + "\\" + image_fname)
+            img_widget.load_img(self.workspace_json_file.file_directory + "/" + self.group_fname + "/" + image_fname)
             self.add_widget(img_widget)
 
 
@@ -111,7 +111,7 @@ class Group(QWidget):
             elif (item.endswith(".png") or item.endswith(".jpg")):
                 QTreeWidgetItem(self.parent_tree, [item])
                 img_widget = ImageWidget(self, self.group_fname, item)
-                img_widget.load_img(self.workspace_json_file.file_directory + "\\" + self.group_fname  + "\\" +item)
+                img_widget.load_img(self.workspace_json_file.file_directory + "/" + self.group_fname  + "/" +item)
                 self.add_widget(img_widget)
             
             elif item.endswith(".separator"):
@@ -134,7 +134,7 @@ class Group(QWidget):
     
     def delete_group_method(self):
         if message_box():
-            shutil.rmtree(self.workspace_json_file.file_directory + "\\" + self.group_fname)
+            shutil.rmtree(self.workspace_json_file.file_directory + "/" + self.group_fname)
             data = self.workspace_json_file.read_data()
             data.pop(self.group_fname)
             self.workspace_json_file.save_data(data)
@@ -152,7 +152,7 @@ class AddDialoge(QDialog):
         super().__init__(parent_group)
         self.group_fname = group_fname
         self.workspace_json_file = parent_group.workspace_json_file
-        uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\add_items_to_group.ui",self)
+        uic.loadUi(SCRIPT_DIRECTORY + "/" + "ui/add_items_to_group.ui",self)
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.img_from_clib.setLayoutDirection(Qt.RightToLeft)
         self.img_from_camera.setLayoutDirection(Qt.RightToLeft)
@@ -202,7 +202,7 @@ class EditableLabel(QWidget):
     title_updated = pyqtSignal(str)
     def __init__(self, group_object, title, style_sheet = None):
         super().__init__(group_object)
-        uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\label_edit.ui",self)
+        uic.loadUi(SCRIPT_DIRECTORY + "/" + "ui/label_edit.ui",self)
         self.title_label.setText(title)
         self.line_edit.editingFinished.connect(self.finish_editing)
         self.line_edit.hide()

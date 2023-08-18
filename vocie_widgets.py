@@ -4,7 +4,7 @@ class VoiceNote(QWidget):
     def __init__(self, parent_group, group_fname, audio_fname):
         super().__init__(parent_group)
         self.workspace_json_file = parent_group.workspace_json_file
-        uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\voice_note.ui",self)
+        uic.loadUi(SCRIPT_DIRECTORY + "/" + "ui/voice_note.ui",self)
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.group_fname = group_fname
         self.audio_fname = audio_fname
@@ -15,7 +15,7 @@ class VoiceNote(QWidget):
 
     def init_audio(self):
         self.media_player = QMediaPlayer()
-        audio_url = QUrl.fromLocalFile(self.workspace_json_file.file_directory + "\\" + self.group_fname + "\\" + self.audio_fname)
+        audio_url = QUrl.fromLocalFile(self.workspace_json_file.file_directory + "/" + self.group_fname + "/" + self.audio_fname)
         self.media_player.setMedia(QMediaContent(audio_url))
         self.timer = QTimer(self)
         self.timer.setInterval(100)
@@ -34,11 +34,11 @@ class VoiceNote(QWidget):
     def toggle_playback(self):
         if self.media_player.state() == QMediaPlayer.PlayingState:
             self.media_player.pause()
-            self.play_pause_button.setIcon(QIcon(SCRIPT_DIRECTORY + "\\" + "ui\\data\\play.png"))
+            self.play_pause_button.setIcon(QIcon(SCRIPT_DIRECTORY + "/" + "ui/data/play.png"))
             self.timer.stop()
         else:
             self.media_player.play()
-            self.play_pause_button.setIcon(QIcon(SCRIPT_DIRECTORY + "\\" + "ui\\data\\pause.png"))
+            self.play_pause_button.setIcon(QIcon(SCRIPT_DIRECTORY + "/" + "ui/data/pause.png"))
             self.timer.start()
 
 
@@ -64,7 +64,7 @@ class VoiceNote(QWidget):
             data = self.workspace_json_file.read_data()
             data[self.group_fname]["items"].remove(self.audio_fname)
             self.workspace_json_file.save_data(data)
-            os.remove(self.workspace_json_file.file_directory + "\\" + self.group_fname + "\\" + self.audio_fname)
+            os.remove(self.workspace_json_file.file_directory + "/" + self.group_fname + "/" + self.audio_fname)
 
 
 class AudioRecorderThread(QThread):
@@ -105,11 +105,11 @@ class RecordAudio(QDialog):
         super().__init__(parent_dialoge)
         self.group_fname = group_fname
         self.workspace_json_file = parent_dialoge.workspace_json_file
-        uic.loadUi(SCRIPT_DIRECTORY + "\\" + "ui\\record_audio.ui",self)
+        uic.loadUi(SCRIPT_DIRECTORY + "/" + "ui/record_audio.ui",self)
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.audio_file_name = get_time() + ".wav"
-        self.recorder = AudioRecorderThread(self.workspace_json_file.file_directory + "\\" + group_fname+ "\\"+ self.audio_file_name)
+        self.recorder = AudioRecorderThread(self.workspace_json_file.file_directory + "/" + group_fname+ "/"+ self.audio_file_name)
         self.record_button.clicked.connect(self.toggle_record_state)
         self.save_button.clicked.connect(self.save_audio)
         self.delete_button.clicked.connect(self.delete_method)
@@ -118,14 +118,14 @@ class RecordAudio(QDialog):
     def toggle_record_state(self):
         if not self.recording:
             self.recording = True
-            self.record_button.setIcon(QIcon(SCRIPT_DIRECTORY + "\\" + "ui\\data\\red_mic.png"))
+            self.record_button.setIcon(QIcon(SCRIPT_DIRECTORY + "/" + "ui/data/red_mic.png"))
             self.save_button.setEnabled(False)
             self.delete_button.setEnabled(False)
             self.recorder.start()
         else:
             self.recording = False
             self.recorder.requestInterruption()
-            self.record_button.setIcon(QIcon(SCRIPT_DIRECTORY + "\\" + "ui\\data\\mic.png"))
+            self.record_button.setIcon(QIcon(SCRIPT_DIRECTORY + "/" + "ui/data/mic.png"))
             self.save_button.setEnabled(True)
             self.delete_button.setEnabled(True)
 
