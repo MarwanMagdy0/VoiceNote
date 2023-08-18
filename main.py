@@ -7,6 +7,10 @@ from pathlib import Path
 import PyQt5
 os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = os.fspath(Path(PyQt5.__file__).resolve().parent / "Qt5" / "plugins")
 
+if len(sys.argv) > 1:
+    if not sys.argv[1].endswith(".vnote"):
+        sys.exit()
+                
 class MainWindow(QMainWindow):
     stackedWidget: QStackedWidget
     def __init__(self):
