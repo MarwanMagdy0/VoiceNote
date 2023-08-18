@@ -33,7 +33,7 @@
      </property>
      <property name="styleSheet">
       <string notr="true">QLabel {
-	font: 63 20pt &quot;JetBrains Mono NL SemiBold&quot;;
+	font: 63 20pt &quot;JetBrains Mono&quot;;
 	background-color: rgb(48,48,48);
 	border: 1px solid rgb(48,48,48);
 	border-radius: 20px;

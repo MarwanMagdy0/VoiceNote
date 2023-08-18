@@ -23,11 +23,11 @@
    <string notr="true">* {
 	background-color: #1e1e1e;
 	color: #ffffff;
-	font: 63 12pt &quot;JetBrains Mono SemiBold&quot;;
+	font: 63 12pt &quot;JetBrains Mono&quot;;
 }
 
 QPushButton {
-	font: 63 20pt &quot;JetBrains Mono NL SemiBold&quot;;
+	font: 63 20pt &quot;JetBrains Mono&quot;;
 	background-color: #9a9ef9;
 	border: 5px solid #9a9ef9;
 	border-radius: 20px;

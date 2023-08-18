@@ -36,7 +36,7 @@
 }
 
 QPushButton {
-	font: 63 20pt &quot;JetBrains Mono NL SemiBold&quot;;
+	font: 63 20pt &quot;JetBrains Mono&quot;;
 	background-color: #9a9ef9;
 	border: 1px solid #9a9ef9;
 	border-radius: 20px;
@@ -76,7 +76,7 @@ QPushButton:pressed {
       </sizepolicy>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 63 20pt &quot;JetBrains Mono NL SemiBold&quot;;</string>
+      <string notr="true">font: 63 20pt &quot;JetBrains Mono&quot;;</string>
      </property>
      <property name="text">
       <string>Choose File Type</string>

@@ -142,7 +142,8 @@ QPushButton:pressed {
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">color: rgb(30, 30, 30);</string>
+           <string notr="true">color: rgb(30, 30, 30);
+font: 17pt &quot;JetBrains Mono&quot;;</string>
           </property>
           <property name="text">
            <string>+</string>

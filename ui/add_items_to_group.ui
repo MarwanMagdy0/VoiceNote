@@ -25,7 +25,7 @@ border-radius: 10px;
 QPushButton {
 text-align: left;
 	padding: 15px;
-	font: 63 15pt &quot;JetBrains Mono NL SemiBold&quot;;
+	font: 63 15pt &quot;JetBrains Mono&quot;;
 background-color: #9a9ef9;
 border: 1px solid #9a9ef9;
 border-radius: 20px;

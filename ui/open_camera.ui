@@ -19,7 +19,7 @@ background-color: rgb(30, 30, 30);
 border:none;
 }
 QPushButton {
-	font: 63 8pt &quot;JetBrains Mono NL SemiBold&quot;;
+	font: 63 8pt &quot;JetBrains Mono&quot;;
 	background-color: #9a9ef9;
 	border: 1px solid #9a9ef9;
 	border-radius: 20px;
