@@ -14,7 +14,7 @@ class FileView(QWidget):
 
     def init_ui(self):
         uic.loadUi(SCRIPT_DIRECTORY + "/" + "ui/load.ui",self)
-        self.title_label = EditableLabel(self, self.workspace_json_file.read_data()["card-title"], 'background:#1e1e1e;font: 63 16pt "JetBrains Mono NL SemiBold";')
+        self.title_label = EditableLabel(self, self.workspace_json_file.read_data()["card-title"], 'background:#1e1e1e;')
         self.title_label.title_updated.connect(self.editing_title_finished)
         self.title_layout.addWidget(self.title_label)
         back_directory = self.workspace_json_file.read_data()["back"]
@@ -38,6 +38,7 @@ class FileView(QWidget):
         self.layout = self.scrollArea.widget().layout()
         self.scrollArea.widget().setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.scroll_area_bar = self.scrollArea.verticalScrollBar()
+        
         self.load_directory_to_ui()
 
     def load_directory_to_ui(self):
@@ -48,10 +49,10 @@ class FileView(QWidget):
             group.group_is_deleted.connect(self.delete_group)
             self.layout.addWidget(group)
             group.load_data()
-            group.activate_mainwindow.connect(self.activateWindow)
-            self.scroll_area_bar.setMaximum(2147483647)
-            self.scroll_area_bar.setValue(self.scroll_area_bar.maximum())
             self.groups.append(group)
+        group.activate_mainwindow.connect(self.activateWindow)
+        self.scroll_area_bar.setMaximum(2147483647)
+        self.scroll_area_bar.setValue(self.scroll_area_bar.maximum())
     
 
     def create_new_group(self):

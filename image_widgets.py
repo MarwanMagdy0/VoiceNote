@@ -14,12 +14,30 @@ class ImageWidget(QWidget):
 
     def set_img(self, image_from_object):
         pixmap = QPixmap.fromImage(image_from_object)
-        self.image.setPixmap(pixmap)
+        original_width = pixmap.width()
+        original_height = pixmap.height()
+        desired_width = window_size[0]-400
+        if original_width>desired_width:
+            ratio = desired_width/original_width
+            print(original_width*ratio, original_height*ratio)
+            scaled_pixmap = pixmap.scaled(int(original_width*ratio), int(original_height*ratio), aspectRatioMode=Qt.KeepAspectRatio)
+            self.image.setPixmap(scaled_pixmap)
+        else:
+            self.image.setPixmap(pixmap)
     
 
     def load_img(self, path):
         pixmap = QPixmap(path)
-        self.image.setPixmap(pixmap)
+        original_width = pixmap.width()
+        original_height = pixmap.height()
+        desired_width = window_size[0]-400
+        if original_width>desired_width:
+            ratio = desired_width/original_width
+            print(original_width*ratio, original_height*ratio)
+            scaled_pixmap = pixmap.scaled(int(original_width*ratio), int(original_height*ratio), aspectRatioMode=Qt.KeepAspectRatio)
+            self.image.setPixmap(scaled_pixmap)
+        else:
+            self.image.setPixmap(pixmap)
     
 
     def mouseDoubleClickEvent(self, event):

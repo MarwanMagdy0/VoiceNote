@@ -118,3 +118,4 @@ class QHSeparationLine(QFrame):
 
 
 refrences_file = HandleJsonFiles(SCRIPT_DIRECTORY + "/ref.json", {"ref":[]})
+window_size = [0,0]

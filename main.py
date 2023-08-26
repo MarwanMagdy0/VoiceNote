@@ -111,6 +111,8 @@ class MainWindow(QMainWindow):
         
 
     def update_stacked(self, widget):
+        window_size[0] = self.width()
+        window_size[1] = self.height()
         self.stackedWidget.addWidget(widget)
         self.stackedWidget.setCurrentWidget(widget)
 

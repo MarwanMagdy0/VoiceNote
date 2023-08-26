@@ -1,7 +1,7 @@
 from vocie_widgets import *
 from image_widgets import *
 from text_widgets  import * 
-
+window_width = None
 class Group(QWidget):
     activate_mainwindow = pyqtSignal()
     group_is_deleted    = pyqtSignal(str)
@@ -200,14 +200,13 @@ class AddDialoge(QDialog):
 
 class EditableLabel(QWidget):
     title_updated = pyqtSignal(str)
-    def __init__(self, group_object, title, style_sheet = None):
+    def __init__(self, group_object, title, style_sheet = ""):
         super().__init__(group_object)
         uic.loadUi(SCRIPT_DIRECTORY + "/" + "ui/label_edit.ui",self)
         self.title_label.setText(title)
         self.line_edit.editingFinished.connect(self.finish_editing)
         self.line_edit.hide()
-        if style_sheet is not None:
-            self.setStyleSheet(style_sheet)
+        self.setStyleSheet(style_sheet + 'font: 63 16pt "JetBrains Mono";')
         
     def mouseDoubleClickEvent(self, event):
         if self.line_edit.isHidden():

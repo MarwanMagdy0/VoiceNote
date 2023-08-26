@@ -38,7 +38,7 @@ class WorkSpace(QWidget):
         self.add_new_card_button.clicked.connect(self.add_new_card_method)
         self.next_item_index = 0
         self.scroll_area_bar = self.scrollArea.verticalScrollBar()
-        self.title_label = EditableLabel(self, self.workspace_json_file.read_data()["card-title"], 'background:#1e1e1e;font: 63 16pt "JetBrains Mono NL SemiBold";')
+        self.title_label = EditableLabel(self, self.workspace_json_file.read_data()["card-title"], 'background:#1e1e1e;')
         self.label_layout.addWidget(self.title_label)
         self.title_label.title_updated.connect(self.editing_title_finished)
         back_directory = self.workspace_json_file.read_data()["back"]
