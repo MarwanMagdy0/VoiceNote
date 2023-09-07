@@ -86,11 +86,14 @@ QScrollBar {
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Plain</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
@@ -105,7 +108,7 @@ QScrollBar {
           </property>
           <property name="styleSheet">
            <string notr="true">border:none;
-background:none;
+background-color: #1e1e1e;
 max-width:1000000px;</string>
           </property>
           <property name="text">
@@ -153,7 +156,7 @@ max-width:1000000px;</string>
       </sizepolicy>
      </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
@@ -169,6 +172,9 @@ max-width:1000000px;</string>
         </property>
         <property name="layoutDirection">
          <enum>Qt::RightToLeft</enum>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>create new    </string>
@@ -200,7 +206,7 @@ max-width:1000000px;</string>
       </sizepolicy>
      </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>

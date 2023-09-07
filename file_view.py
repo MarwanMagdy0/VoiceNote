@@ -49,8 +49,8 @@ class FileView(QWidget):
             group.group_is_deleted.connect(self.delete_group)
             self.layout.addWidget(group)
             group.load_data()
+            group.activate_mainwindow.connect(self.activateWindow)
             self.groups.append(group)
-        group.activate_mainwindow.connect(self.activateWindow)
         self.scroll_area_bar.setMaximum(2147483647)
         self.scroll_area_bar.setValue(self.scroll_area_bar.maximum())
     
