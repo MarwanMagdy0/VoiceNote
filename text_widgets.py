@@ -49,6 +49,8 @@ class NormalText(QWidget):
         alignment = self.label.alignment()
         if alignment == Qt.AlignCenter:
             edit_text_window.checkbox.setChecked(True)
+        else:
+            edit_text_window.checkbox.setChecked(False)
 
         edit_text_window.text_is_deleted.connect(self.deleteLater)
         edit_text_window.setWindowModality(Qt.ApplicationModal)
@@ -74,6 +76,11 @@ class NormalText(QWidget):
 class EditText(QDialog):
     new_text_saved = pyqtSignal(str, str, bool)
     text_is_deleted = pyqtSignal()
+    text_editor: QLabel
+    font_button: QPushButton
+    save_button: QPushButton
+    delete_button: QPushButton
+    checkbox : QCheckBox
     def __init__(self, parent_group, text, text_font, group_fname, ref2text):
         super().__init__(parent_group)
         self.text_font = text_font
