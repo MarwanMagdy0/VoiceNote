@@ -5,6 +5,7 @@ class FileView(QWidget):
     go_back_to_welcome_screen = pyqtSignal()
     back_button : QPushButton
     title_layout : QVBoxLayout
+    treeWidget : QTreeWidget
     def __init__(self, workspace_file):
         super().__init__()
         self.workspace_json_file = HandleJsonFiles(workspace_file)

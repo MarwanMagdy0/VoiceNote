@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QLineEdit, QVBoxLayout, QLabel, QDialog, QApplication, QTreeWidgetItem, QFontDialog, QMessageBox, QFrame, QSizePolicy, QColorDialog, QGridLayout, QStackedWidget, QPushButton, QVBoxLayout, QFileDialog, QScrollArea
+from PyQt5.QtWidgets import QWidget, QLineEdit, QVBoxLayout, QLabel, QDialog, QApplication, QTreeWidgetItem, QFontDialog, QMessageBox, QFrame, QSizePolicy, QColorDialog, QGridLayout, QStackedWidget, QPushButton, QVBoxLayout, QFileDialog, QScrollArea, QTreeWidget
 from PyQt5.QtGui import QPixmap, QImage, QIcon, QFont
 from PyQt5.QtCore import Qt, QTimer, QUrl
 from PyQt5.QtCore import QThread, pyqtSignal

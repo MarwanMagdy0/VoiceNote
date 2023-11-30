@@ -1,7 +1,7 @@
 from vocie_widgets import *
 from image_widgets import *
 from text_widgets  import * 
-window_width = None
+
 class Group(QWidget):
     activate_mainwindow = pyqtSignal()
     group_is_deleted    = pyqtSignal(str)

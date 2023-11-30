@@ -73,22 +73,25 @@ class AudioRecorderThread(QThread):
     def __init__(self, fname):
         super().__init__()
         self.audio = pyaudio.PyAudio()
-        self.stream = None
-        self.frames = []
+        # self.stream = None
         self.fname = fname
         FORMAT = pyaudio.paInt16
         CHANNELS = 1
         RATE = 44100
         self.CHUNK = 1024
         self.stream = self.audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=self.CHUNK)
+        self.stream.stop_stream()
+        self.frames = []
         
     def run(self):
+        self.stream.start_stream()
         while not self.isInterruptionRequested():
             data = self.stream.read(self.CHUNK)
             self.frames.append(data)
+        self.stream.stop_stream()
+
             
     def save(self):
-        self.stream.stop_stream()
         self.stream.close()
         self.audio.terminate()
         wave_file = wave.open(f"{self.fname}", 'wb')
@@ -101,6 +104,10 @@ class AudioRecorderThread(QThread):
 
 class RecordAudio(QDialog):
     audio_added = pyqtSignal(str)
+    record_button: QPushButton
+    save_button: QPushButton
+    delete_button: QPushButton
+
     def __init__(self, parent_dialoge, group_fname):
         super().__init__(parent_dialoge)
         self.group_fname = group_fname
