@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>632</width>
+    <width>626</width>
     <height>172</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Add Text</string>
   </property>
   <property name="styleSheet">
    <string notr="true">* {
@@ -80,7 +80,7 @@ QPushButton:pressed {
      </property>
      <property name="maximumSize">
       <size>
-       <width>100</width>
+       <width>1000</width>
        <height>16777215</height>
       </size>
      </property>

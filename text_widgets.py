@@ -39,6 +39,7 @@ class NormalText(QWidget):
         self.group_fname = group_fname
         layout = QVBoxLayout(self)
         self.label = QLabel(text)
+        # self.label.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
         font = QFont()
         font.fromString(font_str)
         self.label.setFont(font)
