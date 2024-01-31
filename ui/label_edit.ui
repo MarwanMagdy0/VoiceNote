@@ -14,7 +14,7 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">font: 63 16pt &quot;JetBrains Mono&quot;;
+   <string notr="true">font: 75 16pt &quot;DejaVu Sans Mono&quot;;
 background-color: rgb(48, 48, 48);
 </string>
   </property>
